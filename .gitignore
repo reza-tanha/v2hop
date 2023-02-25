@@ -1,0 +1,15 @@
+*.log
+*.pot
+*.pyc
+**/__pycache__/
+db.sqlite3
+
+
+#> Environments 
+.venv 
+venv/ 
+*.spec
+.env
+.vscode
+media/
+static_root/
