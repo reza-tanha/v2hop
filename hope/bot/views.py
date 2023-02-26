@@ -261,7 +261,8 @@ def callback_query_update(update):
                 is_use=True,
                 expire_date=datetime.now() + timedelta(hours=1),
                 user=user,
-                uuid=uuid
+                uuid=uuid,
+                last_num_change=0
             )
             config.save()
             user.user_balance.save()
@@ -294,7 +295,8 @@ def callback_query_update(update):
             is_use=True,
             expire_date=datetime.now() + timedelta(days=30),
             user=user,
-            uuid=uuid
+            uuid=uuid,
+            last_num_change=0
         )
         config.save()
         telegram.editMessageText(
@@ -410,6 +412,14 @@ def callback_query_update(update):
 
     elif callback_data.startswith("change_location:"):
         data = callback_data.split(":")[1]
+        self_config = ConfigVpn.objects.get(id=data)
+        if self_config.last_num_change > 3:
+            return telegram.send_AnswerCallbackQuery(
+                callback_id,
+                "⛔️ شما فقط 3 بار قادر به عوض کردن کانفیگ خود هستید ⛔️"
+            )
+            
+            
         return telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
@@ -455,6 +465,7 @@ def callback_query_update(update):
                 current_config['expiryTime'], new_volume, uuid, True)
         except:
             return
+        num_change_location = config.last_num_change+1
         new_config = ConfigVpn(
             conf=select_config[0],
             server=new_server,
@@ -462,7 +473,8 @@ def callback_query_update(update):
             is_use=True,
             expire_date=config.expire_date,
             user=user,
-            uuid=uuid
+            uuid=uuid,
+            last_num_change=num_change_location
         )
         new_config.save()
         config.delete()

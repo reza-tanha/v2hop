@@ -43,8 +43,6 @@ class Server(models.Model):
 
     def __str__(self) -> str:
         return self.name
-
-
 class ConfigVpn(models.Model):
 
     conf = models.TextField(
@@ -97,11 +95,14 @@ class ConfigVpn(models.Model):
         verbose_name="Is Use This Config?",
         default=False
     )
+    
+    last_num_change = models.IntegerField(
+        verbose_name="Last Change Server",
+        default=0
+    )
 
     def __str__(self) -> str:
         return f"{self.server.name} : {str(self.volume)}"
-
-
 class Subscribe(models.Model):
 
     price = models.IntegerField(
