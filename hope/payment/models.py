@@ -64,3 +64,12 @@ class PriceSettings(SingletonModel):
     
     def __str__(self):
         return f"${self.price} : {self.usd}"
+    
+class BotUpdate(SingletonModel):
+    update = models.BooleanField(
+        verbose_name="update",
+        default=True
+    )
+    
+    def __str__(self):
+        return f"Server is : {self.update}"

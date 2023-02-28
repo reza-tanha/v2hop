@@ -25,6 +25,11 @@ logging = BotLoger()
 
 @api_view(('GET', 'POST'))
 def webhook(request):
+    bot = BotUpdate.objects.all()#.first()
+    if not bot:
+        bot = BotUpdate(update=True)
+        bot.save()
+        
     print(request.data)
     print("="*100)
 
@@ -48,7 +53,14 @@ def message_update(update):
     message_id = update['message_id']
     user_obj = User.objects.filter(user_id=user_id)
     user = user_obj.first()
-
+    
+    bot = BotUpdate.objects.all().first()
+    if (bot.update is False) and (user.is_staff is False):
+        return telegram.send_Message(
+            chat_id,
+            "در حال اپدیت ربات هستیم لطفا منتظر باشید ❤️",
+        )
+        
     if text == '/start':
         user_obj.update(step="Home")
         if not user:
@@ -179,6 +191,13 @@ def callback_query_update(update):
     callback_text = update["message"]["text"]
     user_obj = User.objects.filter(user_id=callback_chat_id)
     user = user_obj.first()
+    
+    bot = BotUpdate.objects.all().first()
+    if (bot.update is False) and (user.is_staff is False):
+        return telegram.send_Message(
+            callback_chat_id,
+            "در حال اپدیت ربات هستیم لطفا منتظر باشید ❤️",
+        )
     if callback_data == 'my_account_balance':
         telegram.editMessageText(
             callback_chat_id,
@@ -199,6 +218,25 @@ def callback_query_update(update):
             MESSAGES["start_message"],
             reply_markup=show_start_home_buttons(callback_chat_id)
         )
+        
+    elif 'bot_update_' in callback_data:
+        status = int(callback_data.split("_")[-1])
+        bot = BotUpdate.objects.all().first()
+        print(bot)
+        if status == 0:
+            bot.update=False
+            bot.save
+            
+        else:
+            bot.update=True
+            bot.save
+        
+        status = "اپدیت" if bot.update == False else "فعال"
+        
+        return telegram.send_AnswerCallbackQuery(
+                callback_id,
+                f"ربات در وضعیت {status} قرار گرفت"
+            )
 
     elif callback_data == 'show_panels':
         telegram.editMessageText(
@@ -230,7 +268,8 @@ def callback_query_update(update):
         )
         
         all_configs_in_server = xray.get_count_config()
-        if len(all_configs_in_server) >= 50:
+        return
+        if len(all_configs_in_server) >= 5000000000:
             server.down=True
             server.save()
             telegram.send_AnswerCallbackQuery(
@@ -246,6 +285,7 @@ def callback_query_update(update):
             return      
 
         if section == "test":
+            print(section)
             time_now = datetime.now(tz=pytz.UTC)
             weektime = time_now + timedelta(7)
             user.user_balance.test_date = weektime
@@ -395,6 +435,7 @@ def callback_query_update(update):
     elif callback_data == 'test_config':
         time_now = datetime.now(tz=pytz.UTC)
         weektime = time_now + timedelta(7)
+        
         if user.user_balance.test_date:
             if user.user_balance.test_date > time_now:
                 return telegram.editMessageText(

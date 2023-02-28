@@ -5,7 +5,7 @@ CHANNEL_SPONSER = 'VPN443IR'
 USER_SUPORTE = 'ADM_VPN443IR'
 ADMINS_LIST = [219171506, ]
 TOKEN = os.environ.get('TOKEN')
-PROXY_HTTP = None  # '192.168.138.200:8081'
+PROXY_HTTP = '127.0.0.1:2021'
 PROXY_SOCKS = os.environ.get('PROXY')
 MESSAGES = {
     "start_message": "💫 سلام خوش آمدید 💫\nلطفا یکی از گزینه ها را انتخاب کنید .\n‌‌‌‌",

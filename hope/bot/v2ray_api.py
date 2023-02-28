@@ -184,7 +184,8 @@ class XUIAPI:
         conf_list = []
         for config in objects:
             is_enable = json.dumps(config['enable'])
-            if is_enable:
+            if is_enable and config['total'] > 157286400:
                 conf_list.append(config)
+
         return conf_list
             

@@ -60,6 +60,18 @@ def back_to_home_button():
 
     return json.dumps(markup)
 
+def bot_update_buttom():
+    markup = {
+        'inline_keyboard': [
+            [
+                {'text': 'enable ✅', 'callback_data': f'bot_update_1'},
+                {'text': 'update 🔄', 'callback_data': f'bot_update_0'}
+            ]
+        ]
+    }
+
+    return json.dumps(markup)
+
 
 def show_volume_buttons():
     """Show volume buttons"""
@@ -251,18 +263,19 @@ def show_admin_keyboard(get_keys: bool = False):
     key_row_1 = ["📈 Get Config Info", "📉Get User Info"]
     key_row_2 = ["🗑 Del User Service", "🪬 General Info"]
     key_row_3 = ["⬆️ Increase Wallet", "🔽 Decrease Wallet"]
+    key_row_4 = ["🔄 Update"]
 
     markup = {
-        'keyboard': [key_row_1, key_row_2, key_row_3],
+        'keyboard': [key_row_1, key_row_2, key_row_3, key_row_4],
         'resize_keyboard': True
     }
 
     if get_keys:
         keys = ["config_info", "user_info", "del_user_service",
-                "totall_users", "incr_wallet", "decr_wallet"]
-        values = key_row_1 + key_row_2 + key_row_3
+                "totall_users", "incr_wallet", "decr_wallet", "bot_update"]
+        values = key_row_1 + key_row_2 + key_row_3 + key_row_4
         return dict(zip(keys, values))
-
+    print(markup)
     return json.dumps(markup)
 
 

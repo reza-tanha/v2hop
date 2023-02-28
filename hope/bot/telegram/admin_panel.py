@@ -13,6 +13,15 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
         user_obj.update(step="Admin_Pannel_Config_Info")
         msg = MESSAGES["message_admin_get_config_info"]
 
+    elif text == keys.get("bot_update"):
+        msg = "Pleace Select One Options"
+        return telegram.send_Message(
+            chat_id=chat_id,
+            text=msg,
+            reply_markup=bot_update_buttom(),
+            parse_mode='html')
+
+    
     elif text == keys.get("user_info"):
         user_obj.update(step="Admin_Pannel_User_Info")
         msg = MESSAGES["message_admin_get_user_info"]
