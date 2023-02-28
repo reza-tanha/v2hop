@@ -267,8 +267,8 @@ def callback_query_update(update):
         )
         
         all_configs_in_server = xray.get_count_config()
-        return
-        if len(all_configs_in_server) >= 5000000000:
+        # return
+        if len(all_configs_in_server) >= 50:
             server.down=True
             server.save()
             telegram.send_AnswerCallbackQuery(
