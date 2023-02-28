@@ -226,13 +226,12 @@ def callback_query_update(update):
         if status == 0:
             bot.update=False
             bot.save
-            
         else:
             bot.update=True
             bot.save
         
         status = "اپدیت" if bot.update == False else "فعال"
-        
+        bot.save()
         return telegram.send_AnswerCallbackQuery(
                 callback_id,
                 f"ربات در وضعیت {status} قرار گرفت"

@@ -6,7 +6,7 @@ USER_SUPORTE = 'ADM_VPN443IR'
 ADMINS_LIST = [219171506, ]
 TOKEN = os.environ.get('TOKEN')
 PROXY_HTTP = None  # '127.0.0.1:2021'
-PROXY_SOCKS = None  # os.environ.get('PROXY')
+PROXY_SOCKS =  None #os.environ.get('PROXY')
 MESSAGES = {
     "start_message": "💫 سلام خوش آمدید 💫\nلطفا یکی از گزینه ها را انتخاب کنید .\n‌‌‌‌",
     "message_error_test_config": "کاربر گرامی شما قبلا کانفیگ تست خود را دریافت کرده اید . شما هر هفته یک بار میتوانید کانفیگ تست دریافت کنید ❗️❗️\n‌‌‌‌",
