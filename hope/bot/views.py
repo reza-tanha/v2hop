@@ -284,7 +284,7 @@ def callback_query_update(update):
             return      
 
         if section == "test":
-            print(section)
+            # print(section)
             time_now = datetime.now(tz=pytz.UTC)
             weektime = time_now + timedelta(7)
             user.user_balance.test_date = weektime
@@ -307,7 +307,7 @@ def callback_query_update(update):
             user.user_balance.save()
             logging.addlog("hope/logs/test_config.log",
                            f"user_id: {callback_chat_id}, location: {server.name}:{server.ip}, uuid: {uuid}")
-            return telegram.editMessageText(
+            telegram.editMessageText(
                 callback_chat_id,
                 callback_message_id,
                 show_config_info(select_config),
@@ -315,6 +315,13 @@ def callback_query_update(update):
                 parse_mode="html"
             )
 
+            return telegram.send_Message(
+                callback_chat_id,
+                show_config_info(select_config),
+                parse_mode="html"
+            )
+
+            
         price = Subscribe.objects.filter(volume=selected_volume).first()
         if user.user_balance.balance < price.price:
             return telegram.editMessageText(
