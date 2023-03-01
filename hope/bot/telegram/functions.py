@@ -72,13 +72,39 @@ def bot_ssapport_buttom():
     markup = {
         'inline_keyboard': [
             [
-                {'text': '📞 پشتیبان 1', 'callback_data': f'admin_suport_1'},
-                {'text': '📞 پشتیبان 2', 'callback_data': f'admin_suport_2'}
+                {'text': '📞 پشتیبان 1', 'callback_data': f'admin_suport:1'},
+                {'text': '📞 پشتیبان 2', 'callback_data': f'admin_suport:2'}
             ],
             [
                 {'text': '🔙', 'callback_data': 'back_to_menu'},
             ]
         ]
+    }
+    return json.dumps(markup)
+
+def bot_bluck_unblack_buttom(user_id):
+    markup = {
+        'inline_keyboard': [
+            [
+                {'text': 'block ❌', 'callback_data': f'block_user:{user_id}:1'},
+                {'text': 'unblock ✅', 'callback_data': f'block_user:{user_id}:0'}
+            ]
+        ]
+    }
+    return json.dumps(markup)
+
+def remove_replay_markup():
+    markup = {
+        'remove_keyboard': True
+    }
+    return json.dumps(markup)
+
+def bot_end_button_suport():
+    markup = {
+        'keyboard': [
+            ["🔚 پایان گفتگو"]
+        ],
+        'resize_keyboard': True
     }
 
     return json.dumps(markup)
