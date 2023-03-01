@@ -24,24 +24,20 @@ def show_start_home_buttons(user_id=0):
     markup = {
         'inline_keyboard': [
             [
-                {'text': '⌛️تست کانفیگ⌛️', 'callback_data': 'test_config'},
-                {'text': '💵خرید کانفیگ💴', 'callback_data': 'show_panels'}
+                {'text': '🔷 تست vpn', 'callback_data': 'test_config'},
+                {'text': '💰خرید vpn', 'callback_data': 'show_panels'}
             ],
             [
-                {'text': f'کیف پول: {balance} تومان 💰',
-                    'callback_data': 'my_account_balance'},
+                {'text': f'موجودی : {balance} تومان 💰','callback_data': 'my_account_balance'},
+                {'text': f'🛒 سرویس های من', 'callback_data': 'my_service'},
+
             ],
             [
-                {'text': f'📱 سرویس های فعال 📱', 'callback_data': 'my_service'},
+                {'text': f'📢 کانال راهنما و اطلاع رسانی ',
+                 'url': f'https://t.me/{CHANNEL_HELP}'}
             ],
             [
-                {'text': f'💡راهنما ( مهم )💡',
-                 'url': f'https://t.me/{CHANNEL_HELP}'},
-                {'text': f'چنل اطلاع رسانی',
-                 'url': f'https://t.me/{CHANNEL_SPONSER}'},
-            ],
-            [
-                {'text': f'🆘پشتیبانی🆘', 'url': f'https://t.me/{USER_SUPORTE}'},
+                {'text': f'☎️ ارتباط با پشتیبانی', 'callback_data': f'supported_admin'},
             ],
         ]
     }
@@ -66,6 +62,21 @@ def bot_update_buttom():
             [
                 {'text': 'enable ✅', 'callback_data': f'bot_update_1'},
                 {'text': 'update 🔄', 'callback_data': f'bot_update_0'}
+            ]
+        ]
+    }
+
+    return json.dumps(markup)
+
+def bot_ssapport_buttom():
+    markup = {
+        'inline_keyboard': [
+            [
+                {'text': '📞 پشتیبان 1', 'callback_data': f'admin_suport_1'},
+                {'text': '📞 پشتیبان 2', 'callback_data': f'admin_suport_2'}
+            ],
+            [
+                {'text': '🔙', 'callback_data': 'back_to_menu'},
             ]
         ]
     }

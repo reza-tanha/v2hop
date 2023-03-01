@@ -244,6 +244,14 @@ def callback_query_update(update):
             MESSAGES['message_get_volume'],
             reply_markup=show_volume_buttons()
         )
+        
+    elif callback_data == 'supported_admin':
+        telegram.editMessageText(
+            callback_chat_id,
+            callback_message_id,
+            MESSAGES['supported_admin_message'],
+            reply_markup=bot_ssapport_buttom()
+        )
 
     elif callback_data.startswith("plan_volume"):
         selected_volume = int(callback_data.split(":")[-1]) * 1024
@@ -268,6 +276,7 @@ def callback_query_update(update):
         
         all_configs_in_server = xray.get_count_config()
         # return
+        # print(len(all_configs_in_server))
         if len(all_configs_in_server) >= 50:
             server.down=True
             server.save()
