@@ -1,0 +1,17 @@
+[
+    {
+        "model": "payment.botupdatestatus",
+        "pk": 1,
+        "fields": {
+            "is_update": true
+        }
+    },
+    {
+        "model": "payment.pricesettings",
+        "pk": 1,
+        "fields": {
+            "price": 600000,
+            "usd": 1.0
+        }
+    }
+]
