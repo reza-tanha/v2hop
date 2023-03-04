@@ -43,6 +43,7 @@ class Telegram:
         params = {
             "chat_id": chat_id,
             "text": text,
+            "parse_mode": "html",
         }
         params.update(**kwargs)
         result = self.bot("sendMessage", params)
@@ -65,6 +66,7 @@ class Telegram:
             "chat_id": chat_id,
             "message_id": message_id,
             "text": text,
+            "parse_mode": "html",
         }
 
         params.update(**kwargs)

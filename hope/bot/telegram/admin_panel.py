@@ -14,14 +14,12 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
         msg = MESSAGES["message_admin_get_config_info"]
 
     elif text == keys.get("bot_update"):
-        msg = "Pleace Select One Options"
         return telegram.send_Message(
             chat_id=chat_id,
-            text=msg,
-            reply_markup=bot_update_buttom(),
-            parse_mode='html')
+            text=MESSAGES["message_admin_update_bot"],
+            reply_markup=show_update_buttom()
+        )
 
-    
     elif text == keys.get("user_info"):
         user_obj.update(step="Admin_Pannel_User_Info")
         msg = MESSAGES["message_admin_get_user_info"]
@@ -39,8 +37,7 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
             text=MESSAGES["message_admin_get_total_users"].format(
                 total_users,
                 total_in_use_conf,
-                total_services),
-            parse_mode='html')
+                total_services))
 
     elif text == keys.get("incr_wallet"):
         user_obj.update(step="Admin_Pannel_Incr_Wallet")
@@ -61,8 +58,8 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
         return telegram.send_Message(
             chat_id=chat_id,
             text=msg,
-            reply_markup=show_admin_back_keyboard(),
-            parse_mode='html')
+            reply_markup=show_admin_back_keyboard()
+        )
 
     # Receive
     if user.step.endswith("ProxyConfig_Info"):
@@ -80,8 +77,8 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
 
         return telegram.send_Message(
             chat_id=chat_id,
-            text=text,
-            parse_mode="html")
+            text=text
+        )
 
     elif user.step.endswith("User_Info"):
         try:
@@ -120,14 +117,13 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
                 return telegram.send_Message(
                     chat_id=chat_id,
                     text=msg,
-                    reply_markup=show_admin_del_service_keyboard(data),
-                    parse_mode='html'
+                    reply_markup=show_admin_del_service_keyboard(data)
                 )
         return telegram.send_Message(
             chat_id=chat_id,
             text=MESSAGES["message_admin_remove_config_err"],
-            reply_markup=show_admin_back_keyboard(),
-            parse_mode='html')
+            reply_markup=show_admin_back_keyboard()
+        )
 
     elif user.step.endswith("Wallet"):
         try:
@@ -148,5 +144,5 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
 
         return telegram.send_Message(
             chat_id=chat_id,
-            text=text,
-            parse_mode="html")
+            text=text
+        )
