@@ -294,11 +294,11 @@ def callback_query_update(update):
         )
 
     elif callback_data == "send_to_one_msg":
-        user_obj.update(step="Admin_Pannel_send_to_one_msg")
+        user_obj.update(step="Admin_Pannel_Send_One_Msg")
         return telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
-            MESSAGES["message_admin_Send_One_Msg"]
+            MESSAGES["message_admin_send_to_one_msg"]
         )
 
     elif callback_data == "send_to_all_msg":
