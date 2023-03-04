@@ -8,10 +8,11 @@ from datetime import datetime
 
 User = get_user_model()
 
+
 def format_bytes(size):
     power = 2**10
     n = 0
-    power_labels = {0 : '', 1: 'KB', 2: 'MB', 3: 'GB'}
+    power_labels = {0:'', 1:'KB', 2:'MB', 3:'GB'}
     while size > power:
         size /= power
         n += 1
@@ -24,20 +25,22 @@ def show_start_home_buttons(user_id=0):
     markup = {
         'inline_keyboard': [
             [
-                {'text': '🔷 تست vpn', 'callback_data': 'test_config'},
-                {'text': '💰خرید vpn', 'callback_data': 'show_panels'}
+                {'text': '🎁 تست VPN', 'callback_data': 'test_config'},
+                {'text': '💳 خرید VPN', 'callback_data': 'show_panels'}
             ],
             [
-                {'text': f'موجودی : {balance} تومان 💰','callback_data': 'my_account_balance'},
-                {'text': f'🛒 سرویس های من', 'callback_data': 'my_service'},
+                {'text': f'💰 موجودی : {balance} تومان',
+                    'callback_data': 'my_account_balance'},
+                {'text': '🛒 سرویس های من', 'callback_data': 'my_service'},
 
             ],
             [
-                {'text': f'📢 کانال راهنما و اطلاع رسانی ',
+                {'text': '📢 کانال راهنما و اطلاع رسانی ',
                  'url': f'https://t.me/{CHANNEL_HELP}'}
             ],
             [
-                {'text': f'☎️ ارتباط با پشتیبانی', 'callback_data': f'supported_admin'},
+                {'text': '📮 ارتباط با پشتیبانی',
+                    'callback_data': 'support_section'},
             ],
         ]
     }
@@ -49,7 +52,7 @@ def back_to_home_button():
     markup = {
         'inline_keyboard': [
             [
-                {'text': '🔙 بازگشت به منو 🔙', 'callback_data': f'back_to_menu'},
+                {'text': '🔝 بازگشت به منو', 'callback_data': 'back_to_menu'},
             ]
         ]
     }
@@ -86,18 +89,20 @@ def bot_bluck_unblack_buttom(user_id):
     markup = {
         'inline_keyboard': [
             [
-                {'text': 'block ❌', 'callback_data': f'block_user:{user_id}:1'},
-                {'text': 'unblock ✅', 'callback_data': f'block_user:{user_id}:0'}
+                {'text': 'block ❌', 'callback_data': f'block_user:{user_id}:block'},
+                {'text': 'unblock ✅', 'callback_data': f'block_user:{user_id}:unblock'}
             ]
         ]
     }
     return json.dumps(markup)
+
 
 def remove_replay_markup():
     markup = {
         'remove_keyboard': True
     }
     return json.dumps(markup)
+
 
 def bot_end_button_suport():
     markup = {
@@ -112,18 +117,18 @@ def bot_end_button_suport():
 
 def show_volume_buttons():
     """Show volume buttons"""
-    subscribe = Subscribe.objects.all()
+    plan = Plan.objects.all()
 
     inline = [
         [
             {'text': f'⚡️ {int(plan.volume / 1024)} گیگ ماهانه | {int(plan.price / 10):,} تومان',
              'callback_data': f'plan_volume:{int(plan.volume / 1024)}'},
         ]
-        for plan in subscribe
+        for plan in plan
     ]
     inline.append(
         [
-            {'text': '🔙 بازگشت به منو 🔙', 'callback_data': 'back_to_menu'},
+            {'text': '🔝 بازگشت به منو', 'callback_data': 'back_to_menu'},
         ]
     )
     markup = {
@@ -134,19 +139,20 @@ def show_volume_buttons():
 
 
 def show_country_buttons(volume: str = 0, section="buy"):
-    """Show country buttons"""
+    """Show country buttons to test or buy"""
     countries = Server.objects.filter(down=False)
     if countries:
         inline = [
             [
                 {'text': country.name,
-                 'callback_data': f"plan_country_{country.domain_country}:{volume}:{section}"}
+                 'callback_data': f"{section}_plan_country_{country.domain_country}:{volume}"}
             ]
             for country in countries
         ]
         inline.append(
             [
-                {'text': '🔙 بازگشت به منو 🔙', 'callback_data': 'back_to_menu'},
+                {'text': '🔙 بازگشت 🔙' if section == "buy" else "🔝 بازگشت به منو", 
+                 'callback_data': 'back_to_choice_volume' if section == "buy" else "back_to_menu"},
             ]
         )
         markup = {
@@ -159,7 +165,7 @@ def show_country_buttons(volume: str = 0, section="buy"):
 def ServicesButton(configs: list, user_id):
     inline = [
         [
-            {'text': f'{conf.server.name}:{conf.id}',
+            {'text': f'{conf.id} :  {conf.server.name}',
              'callback_data': f'service_{user_id}:{conf.id}'},
         ]
         for conf in configs
@@ -169,7 +175,7 @@ def ServicesButton(configs: list, user_id):
     ]
     )
     markup = {
-        'inline_keyboard': inline  # [
+        'inline_keyboard': inline
     }
 
     return json.dumps(markup)
@@ -233,30 +239,20 @@ def calculat_volume(conf, down, up, total, location, expire_date, status: bool =
     text = f"""<code>{conf}</code>\
         \nا---------------------------------------------------------------------\
         \n<b>🎗 مقدار دانلود : </b>{convert_size(down)}\
-        \nا--------------------------------------------------\
+        \nا---------------------------------------------------------------\
         \n<b>🎗 مقدار اپلود : </b>{convert_size(up)}\
-        \nا--------------------------------------------------\
+        \nا---------------------------------------------------------------\
         \n<b>🎗حجم کلی : </b>{convert_size(total)}\
-        \nا--------------------------------------------------\
+        \nا---------------------------------------------------------------\
         \n<b>🎗 لوکیشن : </b>{location}\
-        \nا--------------------------------------------------\
+        \nا---------------------------------------------------------------\
         \n<b>🎗 تاریخ انقضا : </b>{expire_date}\
-        \nا--------------------------------------------------\
+        \nا---------------------------------------------------------------\
         \n<b>🎗 وضعیت : </b>{status}\
         \n.
     """
     return text
 
-
-def message_admin_server_full_count(server, count=50):
-    text = f"""
-🖥 server : <code>{server.name}</code>
-💻 ip : <code>{server.ip}</code>
-👤 server user count : <code>{count}</code>
-❌ please add new server <code>{server.name}</code>
-
-"""
-    return text
 
 def change_config_location_buttons(id):
     markup = {
@@ -265,7 +261,7 @@ def change_config_location_buttons(id):
                 {'text': 'تغیر لوکیشن 🔄', 'callback_data': f'change_location:{id}'},
             ],
             [
-                {'text': '🔙 بازگشت به منو 🔙', 'callback_data': f'back_to_menu'},
+                {'text': '🔙 بازگشت 🔙', 'callback_data': 'back_to_choice_service'},
             ]
         ]
     }
@@ -284,7 +280,7 @@ def show_change_location_country(id):
             for country in countries
         ]
         inline.append([
-            {'text': '🔙 بازگشت به منو 🔙', 'callback_data': 'back_to_menu'},
+            {'text': '🔝 بازگشت', 'callback_data': 'back_to_choice_service'},
         ]
         )
         markup = {
@@ -368,8 +364,10 @@ def show_admin_del_service_keyboard(data):
 
 def get_user_info_msg(user, balance):
     """Generage user information message for admin section"""
-    total_active = user.user_configvpn.filter(expire_date__gte=datetime.now().date()).count()
-    total_deactive = user.user_configvpn.filter(expire_date__lte=datetime.now().date()).count()
+    total_active = user.user_configvpn.filter(
+        expire_date__gte=datetime.now().date()).count()
+    total_deactive = user.user_configvpn.filter(
+        expire_date__lte=datetime.now().date()).count()
     balance = f"{int(balance.balance / 10):,}"
 
     text = f"""<b>⚡️User Information:⚡️</b>\
@@ -390,5 +388,17 @@ def get_user_info_msg(user, balance):
         \n➖➖➖➖➖➖➖➖➖➖➖➖➖\
         \n\n<b>🌈 Super User: </b><code>{user.is_superuser}</code>\
         \n.
+    """
+    return text
+
+
+def server_full_config_msg(server, count=50):
+    text = f"""
+        💥 <b>Server get the maximum config number</b>\
+        \n➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖\
+        \n\n🖥 server: <code>{server.name}</code>\
+        \n💻 ip: <code>{server.ip}</code>\
+        \n👤 server user count: <code>{count}</code>\
+        \n❌ please add new server: <code>{server.name}</code>\
     """
     return text
