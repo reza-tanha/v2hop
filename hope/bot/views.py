@@ -270,13 +270,25 @@ def callback_query_update(update):
             MESSAGES['message_choice_support'],
             reply_markup=show_support_buttons()
         )
-        
-    elif callback_data == 'supported_admin':
-        telegram.editMessageText(
+        return telegram.send_AnswerCallbackQuery(callback_id,"✅")
+
+    elif callback_data == 'test_config':
+        time_now = datetime.now(tz=pytz.UTC)
+        weektime = time_now + timedelta(7)
+
+        if user.user_balance.test_date:
+            if user.user_balance.test_date > time_now:
+                return telegram.editMessageText(
+                    callback_chat_id,
+                    callback_message_id,
+                    MESSAGES['message_error_test_config'],
+                    reply_markup=show_start_home_buttons(callback_chat_id)
+                )
+        return telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
-            MESSAGES['supported_admin_message'],
-            reply_markup=bot_ssapport_buttom()
+            MESSAGES['message_choice_country_test'],
+            reply_markup=show_country_buttons(section="test")
         )
 
     elif 'admin_suport:' in callback_data:
