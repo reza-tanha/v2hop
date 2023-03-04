@@ -559,3 +559,35 @@ def callback_query_update(update):
             telegram.send_AnswerCallbackQuery(
                 callback_id, MESSAGES["message_admin_remove_config_err"],
                 cache_time=3)
+
+    elif callback_data.startswith("support_admin_id"):
+        admin_id = callback_data.split(":")[1]
+        user_obj.update(step=f"support_admin:{admin_id}")
+        return telegram.send_Message(
+            callback_chat_id,
+            MESSAGES['message_support_section'],
+            reply_markup=bot_end_button_suport()
+        )
+
+    elif callback_data.startswith("block_user"):
+        __, user_id, status = callback_data.split(":")
+        user = get_object_or_404(User, user_id=user_id)
+        if status == "block":
+            user.update(is_active=False)
+        else:
+            user.update(is_active=True)
+        return telegram.send_AnswerCallbackQuery(
+            callback_id,
+            MESSAGES["message_admin_user_access"].format(status)
+        )
+
+    elif callback_data.endswith("update_bot"):
+        status = callback_data.split("_")[0]
+        if status == "enable":
+            bot.update(is_update=False)
+        else:
+            bot.update(is_update=True)
+        return telegram.send_AnswerCallbackQuery(
+            callback_id,
+            text=MESSAGES[f"message_admin_{status}_bot_update"]
+        )
