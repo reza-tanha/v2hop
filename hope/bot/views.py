@@ -182,47 +182,44 @@ def message_update(update):
 
     if user.step.startswith("Admin_Pannel"):
         management(user_obj, user, telegram, chat_id, text)
-        
-    if user.step.startswith("user_support_message:"):
-        if text == '🔚 پایان گفتگو':
-            user_obj.update(step=f"home")
-            
-            res = telegram.send_Message(
-                chat_id,
-                MESSAGES["end_support_message"],
-                reply_markup=remove_replay_markup()
-            )
-            return telegram.send_Message(
-                chat_id,
-                MESSAGES["start_message"],
-                reply_markup=show_start_home_buttons(chat_id),
-            )
+
+    if user.step.startswith("support_admin"):
         if not user.is_active:
             return telegram.send_Message(
                 chat_id,
-                "you blocked !"
-            )                    
-        if user.step.startswith("user_support_message:"):
-            num = str(user.step).split(":")
-            admins = User.objects.filter(is_staff=True)
-
-            if admins.count() <= 2:
-                admin_id = admins[1]
-            else:
-                admin_id = admins[int(num[1])]              
-            res = telegram.forward_Message(
-                admin_id.user_id,
-                user_id,
-                message_id
+                MESSAGES["message_block_user"],
             )
-            msg = f"user_id : <code>{chat_id}</code>\nname : <code>{first_name}</code>\nusername : @{username}\n"
+
+        if text == '🔚 پایان گفتگو':
+            user_obj.update(step="home")
+            telegram.send_Message(chat_id, MESSAGES["message_end_support_conversation"],
+                                  reply_markup=remove_replay_markup()
+                                  )
+            return telegram.send_Message(chat_id, MESSAGES["start_message"],
+                                         reply_markup=show_start_home_buttons(
+                chat_id)
+            )
+
+        selected_admin = user.step.split(":")[1]
+        response = telegram.forward_Message(
+            selected_admin,
+            user_id,
+            message_id
+        )
+        if response.get("error_code"):
             return telegram.send_Message(
-                admin_id.user_id,
-                msg,
-                reply_to_message_id=res['result']['message_id'],
-                parse_mode="html",
-                reply_markup=bot_bluck_unblack_buttom(chat_id)
-            )  
+                chat_id=chat_id,
+                text=MESSAGES["message_choice_another_admin"],
+                reply_markup=show_support_buttons()
+            )
+        msg = f"user_id: <code>{chat_id}</code>\nname: <code>{first_name}</code>\nusername: @{username}\n➖➖➖➖➖➖➖➖➖"
+        return telegram.send_Message(
+            chat_id=selected_admin,
+            text=msg,
+            reply_to_message_id=response['result']['message_id'],
+            reply_markup=show_block_unblock_user_buttons(chat_id)
+        )
+
 
 def callback_query_update(update):
     telegram = Telegram()
@@ -256,55 +253,20 @@ def callback_query_update(update):
         perfect = PerfectMonyPayment(user=user, is_tmp=True)
         perfect.save()
 
-    elif callback_data == 'back_to_menu':
+    elif callback_data == "back_to_menu":
         return telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
             MESSAGES["start_message"],
             reply_markup=show_start_home_buttons(callback_chat_id)
         )
-        
-    elif 'block_user' in callback_data:
-        data = callback_data.split(":")
-        user = User.objects.get(user_id=data[1])
-        print(user)
-        if int(data[2]) == 1:
-            user.is_active=False
-            user.save()
-        else:
-            user.is_active=True
-            user.save()
-        
-        status = "بلاک" if user.is_active == False else "فعال"
-        bot.save()
-        return telegram.send_AnswerCallbackQuery(
-                callback_id,
-                f"کاربر {status} شد"
-            )
-        
-    elif 'bot_update_' in callback_data:
-        status = int(callback_data.split("_")[-1])
-        bot = BotUpdate.objects.all().first()
-        if status == 0:
-            bot.update=False
-            bot.save
-        else:
-            bot.update=True
-            bot.save
-        
-        status = "اپدیت" if bot.update == False else "فعال"
-        bot.save()
-        return telegram.send_AnswerCallbackQuery(
-                callback_id,
-                f"ربات در وضعیت {status} قرار گرفت"
-            )
 
-    elif callback_data == 'show_panels':
+    elif callback_data == 'support_section':
         telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
-            MESSAGES['message_get_volume'],
-            reply_markup=show_volume_buttons()
+            MESSAGES['message_choice_support'],
+            reply_markup=show_support_buttons()
         )
         
     elif callback_data == 'supported_admin':
