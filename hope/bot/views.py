@@ -151,8 +151,8 @@ def message_update(update):
             user_obj.update(step='Home')
             return
 
-        logging.addlog("hope/logs/pays.log",
-                       f"user id : {user_id}, perfect info {perfect.voucher_code}:{perfect.voucher_active}, {pay_perfect}")
+        logging.addlog("pays.log",
+            f"user id : {user_id}, perfect info {perfect.voucher_code}:{perfect.voucher_active}, {pay_perfect}")
 
         price_pay = float(pay_perfect.get("VOUCHER_AMOUNT"))
         usdtorial = PriceSettings.objects.all().first()
@@ -445,8 +445,9 @@ def callback_query_update(update):
                 select_config),
             parse_mode="html"
         )
-        return logging.addlog("hope/logs/real_config.log",
-                              f"user_id: {callback_chat_id}, volume: {selected_volume}, MB location: {server.name}:{server.ip}, uuid: {uuid}")
+        return logging.addlog("real_config.log", 
+                              f"""user_id: {callback_chat_id}, volume: {selected_volume},
+                              MB location: {server.name}:{server.ip}, uuid: {uuid}""")
 
     elif callback_data == 'my_service':
         configs = ConfigVpn.objects.filter(
@@ -499,16 +500,20 @@ def callback_query_update(update):
         config = ConfigVpn.objects.get(id=config_id)
         server = config.server
         xray = XUIAPI(server.ip, server.username, server.password)
-        config_info = xray.get_config_uuid(config.uuid)
-        text = calculat_volume(
-            config.conf,
-            config_info['down'],
-            config_info['up'],
-            config_info['total'],
-            server.name,
-            config.expire_date,
-            config_info['enable'],
-        )
+        config_info = xray.get_config_uuid(config.uuid)        
+        try:
+            text = calculat_volume(
+                config.proxy_hash,
+                config_info['down'],
+                config_info['up'],
+                config_info['total'],
+                server.name,
+                config.expire_date,
+                config_info['enable'],
+            )
+        except Exception as error:
+            logging.addlog("show_my_service.log", f"Config data not available, ProxyConfig id is: {config_id}")
+            return
 
         return telegram.editMessageText(
             callback_chat_id,
