@@ -311,7 +311,7 @@ def show_admin_keyboard(get_keys: bool = False):
     key_row_1 = ["📈 Get Config Info", "📉Get User Info"]
     key_row_2 = ["🗑 Del User Service", "🪬 General Info"]
     key_row_3 = ["⬆️ Increase Wallet", "🔽 Decrease Wallet"]
-    key_row_4 = ["🔄 Update"]
+    key_row_4 = ["📢 Send To All Msg", "♻️ Update"]
 
     markup = {
         'keyboard': [key_row_1, key_row_2, key_row_3, key_row_4],
@@ -320,7 +320,8 @@ def show_admin_keyboard(get_keys: bool = False):
 
     if get_keys:
         keys = ["config_info", "user_info", "del_user_service",
-                "totall_users", "incr_wallet", "decr_wallet", "bot_update"]
+                "totall_users", "incr_wallet", "decr_wallet", "send_universal_msg",
+                "bot_update",]
         values = key_row_1 + key_row_2 + key_row_3 + key_row_4
         return dict(zip(keys, values))
     print(markup)
@@ -417,3 +418,16 @@ def server_full_config_msg(server, count=50):
         \n❌ please add new server: <code>{server.name}</code>\
     """
     return text
+
+
+def show_admin_send_msg_buttons():
+    markup = {
+        'inline_keyboard': [
+            [
+                {'text': '🫂 Send To All', 'callback_data': 'send_to_all_msg'},
+                {'text': '👤 Send To One', 'callback_data': 'send_to_one_msg'}
+            ],
+        ]
+    }
+
+    return json.dumps(markup)
