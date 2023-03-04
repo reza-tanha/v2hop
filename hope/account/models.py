@@ -15,16 +15,15 @@ class User(AbstractUser):
         default="home"
     )
 
-    is_sent_ads = models.BooleanField(
+    is_send_ads = models.BooleanField(
         default=False,
-        verbose_name="Did the ads message get sent?"
+        verbose_name="send ads status"
     )
 
-    sent_ads_time = models.DateTimeField(
-        auto_now_add=True,
+    send_ads_time = models.DateTimeField(
         blank=True,
         null=True,
-        verbose_name="Sent message time"
+        verbose_name="send ads time"
     )
 
     USERNAME_FIELD = 'username'
