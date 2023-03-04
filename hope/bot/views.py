@@ -1,20 +1,21 @@
 from .v2ray_api import XUIAPI
+from .telegram.telegram import Telegram
+from .telegram.configs import *
+from .telegram.functions import *
+from .telegram.admin_panel import management
+from .telegram.change_server_location import *
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 
 from hope.bot.log_api import BotLoger
-from hope.bot.telegram.telegram import Telegram
-from hope.bot.telegram.configs import *
-from hope.bot.telegram.functions import *
-from hope.bot.telegram.admin_panel import management
 from hope.payment.models import *
 from hope.ray.models import *
 
 from perfectmoney import PerfectMoney
 from datetime import timedelta, datetime
-from unidecode import unidecode
 from uuid import uuid4
 import pytz
 
