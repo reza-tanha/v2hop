@@ -15,6 +15,18 @@ class User(AbstractUser):
         default="home"
     )
 
+    is_sent_ads = models.BooleanField(
+        default=False,
+        verbose_name="Did the ads message get sent?"
+    )
+
+    sent_ads_time = models.DateTimeField(
+        auto_now_add=True,
+        blank=True,
+        null=True,
+        verbose_name="Sent message time"
+    )
+
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['user_id']
 

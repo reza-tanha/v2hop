@@ -8,7 +8,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     list_display = ("id", "username", "user_id", "step")
-    list_filter = ("username", "user_id", "is_sent_ads", "sent_ads_time")
+    list_filter = ("username", "user_id", "is_send_ads", "send_ads_time")
     fieldsets = (
         (None, {
             'fields': ('user_id', 'password')
