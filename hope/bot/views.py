@@ -26,17 +26,13 @@ logging = BotLoger()
 
 @api_view(('GET', 'POST'))
 def webhook(request):
-    bot = BotUpdate.objects.all()#.first()
-    if not bot:
-        bot = BotUpdate(update=True)
-        bot.save()
-        
     print(request.data)
     print("="*100)
 
     data = request.data
     if 'message' in data:
         message_update(data)
+
     elif 'callback_query' in data:
         callback_query_update(data)
     return Response('Hello')
