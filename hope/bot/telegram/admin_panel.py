@@ -10,7 +10,7 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
 
     # Send
     if text == keys.get("config_info"):
-        user_obj.update(step="Admin_Pannel_Config_Info")
+        user_obj.update(step="Admin_Pannel_ProxyConfig_Info")
         msg = MESSAGES["message_admin_get_config_info"]
 
     elif text == keys.get("bot_update"):
@@ -32,7 +32,7 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
 
     elif text == keys.get("totall_users"):
         total_users = User.objects.count()
-        total_in_use_conf = ConfigVpn.objects.filter(is_use=True).count()
+        total_in_use_conf = ProxyConfig.objects.filter(is_use=True).count()
         total_services = Server.objects.count()
         return telegram.send_Message(
             chat_id=chat_id,
@@ -65,16 +65,16 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
             parse_mode='html')
 
     # Receive
-    if user.step.endswith("Config_Info"):
+    if user.step.endswith("ProxyConfig_Info"):
         vmess = text.strip()
-        conf = ConfigVpn.objects.filter(Q(conf=vmess) | Q(uuid=vmess)).first()
-        if conf:
+        proxy_config = ProxyConfig.objects.filter(Q(proxy_hash=vmess) | Q(uuid=vmess)).first()
+        if proxy_config:
             config_info = XUIAPI(
-                server=conf.server.ip,
-                username=conf.server.username,
-                password=conf.server.password).get_config_uuid(conf.uuid)
+                server=proxy_config.server.ip,
+                username=proxy_config.server.username,
+                password=proxy_config.server.password).get_config_uuid(proxy_config.uuid)
             text = get_amount_used_msg(
-                config_info=config_info, config_obj=conf)
+                config_info=config_info, config_obj=proxy_config)
         else:
             text = MESSAGES["message_admin_config_not_found_err"]
 
@@ -96,13 +96,13 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
 
         return telegram.send_Message(
             chat_id=chat_id,
-            text=text,
-            parse_mode="html")
+            text=text
+        )
 
     elif user.step.endswith("Delete_Service"):
         user_text = text.strip()
-        config = ConfigVpn.objects.filter(
-            Q(uuid=user_text) | Q(conf=user_text)).first()
+        config = ProxyConfig.objects.filter(
+            Q(uuid=user_text) | Q(proxy_hash=user_text)).first()
         if config:
             server_ip = config.server.ip
             info = XUIAPI(

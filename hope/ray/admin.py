@@ -2,8 +2,8 @@ from django.contrib import admin
 from hope.ray.models import *
 
 
-@admin.register(ConfigVpn)
-class ConfigVpnAdmin(admin.ModelAdmin):
+@admin.register(ProxyConfig)
+class ProxyConfigAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request).prefetch_related("server")
         return queryset
@@ -14,8 +14,8 @@ class ConfigVpnAdmin(admin.ModelAdmin):
     search_fields = ( "conf","server")
     
     
-@admin.register(Subscribe)
-class SubscribeAdmin(admin.ModelAdmin):
+@admin.register(Plan)
+class PlanAdmin(admin.ModelAdmin):
     
     list_display = ("id", "price","volume")
     list_display_links = ("id",)

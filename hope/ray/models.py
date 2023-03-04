@@ -15,7 +15,6 @@ class Server(models.Model):
         default="None",
         null=True,
         blank=True
-
     )
 
     password = models.CharField(
@@ -25,6 +24,7 @@ class Server(models.Model):
         null=True,
         blank=True
     )
+
     ip = models.CharField(
         max_length=40,
         verbose_name="ip Server"
@@ -41,11 +41,36 @@ class Server(models.Model):
         verbose_name="Down"
     )
 
+    is_tunnel = models.BooleanField(
+        default=False,
+        verbose_name="Is Tunnel ?"
+    )
+
     def __str__(self) -> str:
         return self.name
-class ConfigVpn(models.Model):
 
-    conf = models.TextField(
+
+class ProxyConfig(models.Model):
+
+    user = models.ForeignKey(
+        to=User,
+        verbose_name="User",
+        related_name="proxy_config",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    server = models.ForeignKey(
+        to=Server,
+        on_delete=models.SET_NULL,
+        related_name="proxy_config",
+        verbose_name="server",
+        null=True,
+        blank=True
+    )
+
+    proxy_hash = models.TextField(
         verbose_name="HashV2ray",
         unique=True
     )
@@ -56,54 +81,32 @@ class ConfigVpn(models.Model):
         blank=True
     )
 
-    server = models.ForeignKey(
-        to=Server,
-        on_delete=models.SET_NULL,
-        related_name="server_configvpn",
-        verbose_name="server",
-        null=True,
-        blank=True
-    )
-
     volume = models.IntegerField(
         verbose_name="Volume : MB",
         default=150
     )
 
-    is_tunel = models.BooleanField(
-        default=False,
-        verbose_name="Is Tunel ?"
-    )
-
-    expire_date = models.DateField(
-        verbose_name="Expire Date Time",
-
-        null=True,
-        blank=True
-    )
-
-    user = models.ForeignKey(
-        to=User,
-        verbose_name="User",
-        related_name="user_configvpn",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-
-    is_use = models.BooleanField(
-        verbose_name="Is Use This Config?",
-        default=False
-    )
-    
     last_num_change = models.IntegerField(
         verbose_name="Last Change Server",
         default=0
     )
+    
+    is_use = models.BooleanField(
+        verbose_name="Is this configuration used?",
+        default=False
+    )
+    
+    expire_date = models.DateField(
+        verbose_name="Expire Date Time",
+        null=True,
+        blank=True
+    )
 
     def __str__(self) -> str:
         return f"{self.server.name} : {str(self.volume)}"
-class Subscribe(models.Model):
+
+
+class Plan(models.Model):
 
     price = models.IntegerField(
         verbose_name="Price : Rial"

@@ -4,4 +4,4 @@ from .models import *
 
 admin.site.register(PriceSettings)
 admin.site.register(PerfectMonyPayment)
-admin.site.register(BotUpdate)
+admin.site.register(BotUpdateStatus)
