@@ -98,50 +98,46 @@ def message_update(update):
             reply_markup=show_admin_keyboard())
 
     if user.step == 'GET_VOUCHER_CODE':
-        perfect = PerfectMonyPayment.objects.get(
-            user=user,
-            is_tmp=True
-        )
+        perfect = get_object_or_404(PerfectMonyPayment, user=user, is_tmp=True)
+        if len(text) != 10:
+            return telegram.send_Message(
+                chat_id, MESSAGES['message_voucher_code_len_error']
+            )
         try:
             text = unidecode(text)
         except:
-            pass
-        if len(text) != 10:
-            telegram.send_Message(
-                chat_id,
-                MESSAGES['voucher_code_len_invalid']
+            return telegram.send_Message(
+                chat_id, MESSAGES['message_voucher_code_type_error']
             )
-            return
         perfect.voucher_code = text
         perfect.save()
         user_obj.update(step='GET_VOUCHER_ACTIVE')
-        telegram.send_Message(
+        return telegram.send_Message(
             chat_id,
-            MESSAGES['voucher_active'],
+            MESSAGES['message_get_voucher_activate_code'],
             reply_markup=back_to_home_button()
         )
-        return
 
     if user.step == 'GET_VOUCHER_ACTIVE':
-        perfect = PerfectMonyPayment.objects.get(
-            user=user,
-            is_tmp=True
-        )
-        try:
-            text = unidecode(text)
-        except:
-            pass
+        perfect = get_object_or_404(PerfectMonyPayment, user=user, is_tmp=True)
         if len(text) != 16:
             return telegram.send_Message(
                 chat_id,
-                MESSAGES['voucher_active_len_invalid'],
-
-            )            
+                MESSAGES['message_voucher_activate_len_error']
+            )
+        try:
+            text = int(text)
+        except:
+            return telegram.send_Message(
+                chat_id, MESSAGES['message_voucher_code_len_error']
+            )   
         perfect.voucher_active = text
         perfect.save()
-        p = PerfectMoney(PERFECTMONEY_USER, PERFECTMONEY_PASSWORD,
-                         proxies=PERFECTMONEY_PROXY)
-        pay_perfect = p.voucher_activation(
+        perfect_money_obj = PerfectMoney(
+            PERFECTMONEY_USER,
+            PERFECTMONEY_PASSWORD,
+            proxies=PERFECTMONEY_PROXY)
+        pay_perfect = perfect_money_obj.voucher_activation(
             PERFECTMONEY_USD,
             perfect.voucher_code,
             perfect.voucher_active
@@ -149,7 +145,7 @@ def message_update(update):
         if not pay_perfect:
             telegram.send_Message(
                 chat_id,
-                MESSAGES['message_error_voucher_active'],
+                MESSAGES['message_voucher_activate_error'],
                 reply_markup=show_start_home_buttons(chat_id)
             )
             user_obj.update(step='Home')
@@ -163,10 +159,11 @@ def message_update(update):
         user.user_balance.balance += int(price_pay * usdtorial.price)
         user.user_balance.save()
         user_obj.update(step="Home")
-        telegram.send_Message(chat_id,
-                              MESSAGES['message_success_payement'],
-                              reply_markup=show_start_home_buttons(chat_id)
-                              )
+        telegram.send_Message(
+            chat_id,
+            MESSAGES['message_success_payement'],
+            reply_markup=show_start_home_buttons(chat_id)
+        )
         perfect.status = True
         perfect.is_tmp = False
         perfect.save()
@@ -180,8 +177,7 @@ def message_update(update):
                 int(price_pay * usdtorial.price),
                 price_pay,
                 perfect.voucher_code,
-                perfect.voucher_active),
-            parse_mode="html"
+                perfect.voucher_active)
         )
 
     if user.step.startswith("Admin_Pannel"):
