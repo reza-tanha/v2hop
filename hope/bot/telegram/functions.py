@@ -73,9 +73,17 @@ def show_update_buttom():
 
     return json.dumps(markup)
 
-def bot_ssapport_buttom():
+
+def show_support_buttons():
+    """Show the support section buttons"""
+    admins = User.objects.filter(is_staff=True)
+    buttons = []
+    for counter, admin in enumerate(admins, 1):
+        buttons.append({'text': f'☎️ پشتیبان شماره {counter}',
+                       'callback_data': f'support_admin_id:{admin.user_id}'})
     markup = {
         'inline_keyboard': [
+            buttons,
             [
                 {'text': '🔙 بازگشت به منو', 'callback_data': 'back_to_menu'},
             ]
