@@ -179,10 +179,16 @@ def show_services_button(configs: list, user_id: int, start_range, next_range):
         ]
         for conf in configs
     ]
-    inline.append([
-        {'text': '🔙 بازگشت به منو 🔙', 'callback_data': 'back_to_menu'},
-    ]
-    )
+    if next_range:
+        buttons_bm.append({'text': "بعدی 🔚", 'callback_data': f"next_service:{start_range}:{next_range}"})
+        buttons_bm.append({'text': '🔝 بازگشت به منو', 'callback_data': 'back_to_menu'})
+    else:
+        buttons_bm.append({'text': '🔝 بازگشت به منو', 'callback_data': 'back_to_menu'})
+
+    if start_range:
+        buttons_bm.append({'text': "قبلی 🔜", 'callback_data': f"previous_services:{start_range}:{next_range}"})
+
+    inline.append(buttons_bm)
     markup = {
         'inline_keyboard': inline
     }
