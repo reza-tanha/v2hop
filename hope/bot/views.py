@@ -183,7 +183,7 @@ def message_update(update):
         )
 
     if user.step.startswith("Admin_Pannel"):
-        management(user_obj, user, telegram, chat_id, text)
+        management(user_obj, user, telegram, chat_id, text, message_id)
 
     if user.step.startswith("support_admin"):
         if not user.is_active:
