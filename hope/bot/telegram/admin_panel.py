@@ -135,8 +135,9 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
                 else:
                     user.user_balance.balance -= int(mony)
                 user.user_balance.save()
+                balance = f"<b>{int(user.user_balance.balance / 10):,}</b>"
                 text = MESSAGES["message_admin_balance_update"].format(
-                    user_id, user.user_balance.balance)
+                    user_id, balance)
             else:
                 text = MESSAGES["message_admin_user_not_found_err"]
         except Exception:
