@@ -59,12 +59,14 @@ def back_to_home_button():
 
     return json.dumps(markup)
 
-def bot_update_buttom():
+
+def show_update_buttom():
+    """Show buttons to enable or disable bot status"""
     markup = {
         'inline_keyboard': [
             [
-                {'text': 'enable ✅', 'callback_data': f'bot_update_1'},
-                {'text': 'update 🔄', 'callback_data': f'bot_update_0'}
+                {'text': "♻️ Eenable Update Msg", 'callback_data': "enable_update_bot"},
+                {'text': "⛔️ Disable Update Msg", 'callback_data': "disable_update_bot"}
             ]
         ]
     }
@@ -75,17 +77,14 @@ def bot_ssapport_buttom():
     markup = {
         'inline_keyboard': [
             [
-                {'text': '📞 پشتیبان 1', 'callback_data': f'admin_suport:1'},
-                {'text': '📞 پشتیبان 2', 'callback_data': f'admin_suport:2'}
-            ],
-            [
-                {'text': '🔙', 'callback_data': 'back_to_menu'},
+                {'text': '🔙 بازگشت به منو', 'callback_data': 'back_to_menu'},
             ]
         ]
     }
     return json.dumps(markup)
 
-def bot_bluck_unblack_buttom(user_id):
+
+def show_block_unblock_user_buttons(user_id: int):
     markup = {
         'inline_keyboard': [
             [
@@ -162,7 +161,9 @@ def show_country_buttons(volume: str = 0, section="buy"):
         return json.dumps(markup)
 
 
-def ServicesButton(configs: list, user_id):
+def show_services_button(configs: list, user_id: int, start_range, next_range):
+    """Show list of all available services"""
+    buttons_bm = []
     inline = [
         [
             {'text': f'{conf.id} :  {conf.server.name}',
@@ -181,11 +182,11 @@ def ServicesButton(configs: list, user_id):
     return json.dumps(markup)
 
 
-def show_config_info(config):
+def show_config_info(config, section: str = 0):
     volume = format_bytes(config[2])
     proxy = config[0]
     text = f"""
-        \n🎗  کانفیگ شما :\
+        \n🎗  کانفیگ {'تست' if section else ''} شما :\
         \n\n<code>{proxy}</code>\
         \n\n🎗حجم : {volume}
         \n❗️برای دستگاه های ios فقط از برنامه NapsternetV استفاده کنید.\
