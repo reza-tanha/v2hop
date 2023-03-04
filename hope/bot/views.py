@@ -305,6 +305,53 @@ def callback_query_update(update):
             is_use=True,
             volume__gt=150
         )
+        if configs.count() == 0:
+            return telegram.editMessageText(
+                callback_chat_id,
+                callback_message_id,
+                MESSAGES['message_not_service'],
+                reply_markup=show_start_home_buttons(callback_chat_id),
+            )
+        if configs.count() <= 5:
+            next_range = 0
+        else:
+            next_range = 5
+
+        return telegram.editMessageText(
+            callback_chat_id,
+            callback_message_id,
+            MESSAGES["message_list_my_services"],
+            reply_markup=show_services_button(configs[:5], callback_chat_id, 0, next_range)
+        )
+
+    elif callback_data.startswith("next_service") or callback_data.startswith("previous_service"):
+        section, start_range, next_range = callback_data.split(":")
+        start_range, next_range = int(start_range), int(next_range)
+        configs = ProxyConfig.objects.filter(
+            user=user,
+            is_use=True,
+            volume__gt=150
+        )
+        if section.startswith("next"):
+            start_range = next_range
+            next_range += 5
+            services = configs[start_range:next_range]
+            if next_range >= configs.count():
+                next_range = 0
+        else:
+            if next_range == 0:
+                next_range = start_range
+            else:
+                next_range -= 5
+            start_range -= 5
+            services = configs[start_range:next_range]
+
+        return telegram.editMessageText(
+            callback_chat_id,
+            callback_message_id,
+            MESSAGES["message_list_my_services"],
+            reply_markup=show_services_button(services, callback_chat_id, start_range, next_range)
+        )
 
     elif callback_data.startswith("plan_volume"):
         selected_volume = int(callback_data.split(":")[-1]) * 1024
