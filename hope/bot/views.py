@@ -240,11 +240,13 @@ def callback_query_update(update):
             callback_chat_id,
             MESSAGES["message_bot_updating"]
         )
+
     if callback_data == 'my_account_balance':
+        balance = f"<b>{int(user.user_balance.balance / 10):,}</b>"
         telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
-            MESSAGES['voucher_code'],
+            MESSAGES['message_get_voucher_code'].format(balance),
             reply_markup=back_to_home_button()
         )
         user_obj.update(step="GET_VOUCHER_CODE")
