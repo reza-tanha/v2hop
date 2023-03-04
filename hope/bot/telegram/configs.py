@@ -55,7 +55,11 @@ MESSAGES = {
     "message_admin_update_bot": "⚡️ <b>Change Bot Status</b> ⚡️\n➖➖➖➖➖➖➖➖➖➖➖➖➖\nClick on the following buttons to activate or deactivate bot.",
     "message_admin_enable_bot_update": "The bot was activated and made available to all users ✅",
     "message_admin_disable_bot_update": "The bot has been disabled and is only available for admins 🚫",
-    "message_admin_user_access": "The user was successfully {}"
+    "message_admin_user_access": "The user was successfully {}",
+    "message_admin_send_universal_msg": "📢 <b>Send Msg</b>\n➖➖➖➖➖➖➖➖➖➖➖➖➖\nPlease choose one of the following options",
+    "message_admin_send_to_all_msg": "📢 Send Msg\n➖➖➖➖➖➖➖➖➖➖➖➖➖\nSend your message to forward to all users",
+    "message_admin_send_to_one_msg": "📢 Send Msg\n➖➖➖➖➖➖➖➖➖➖➖➖➖\nSend your message to forward to the user\n\nPlease write your userID in the first line and text msg in the following lines",
+    "message_admin_send_msg_success": "📢 Send Msg\n➖➖➖➖➖➖➖➖➖➖➖➖➖\nYour message has been successfully sent ✅",
 }
 
 
