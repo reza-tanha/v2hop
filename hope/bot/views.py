@@ -293,6 +293,22 @@ def callback_query_update(update):
             reply_markup=show_country_buttons(section="test")
         )
 
+    elif callback_data == "send_to_one_msg":
+        user_obj.update(step="Admin_Pannel_send_to_one_msg")
+        return telegram.editMessageText(
+            callback_chat_id,
+            callback_message_id,
+            MESSAGES["message_admin_Send_One_Msg"]
+        )
+
+    elif callback_data == "send_to_all_msg":
+        user_obj.update(step="Admin_Pannel_Send_All_Msg")
+        return telegram.editMessageText(
+            callback_chat_id,
+            callback_message_id,
+            MESSAGES["message_admin_send_to_all_msg"]
+        )
+
     elif callback_data in ['show_panels', "back_to_choice_volume"]:
         telegram.editMessageText(
             callback_chat_id,
