@@ -67,7 +67,7 @@ def message_update(update):
     if bot.is_update and not user.is_staff:
         return telegram.send_Message(
             chat_id,
-            "در حال اپدیت ربات هستیم لطفا منتظر باشید ❤️",
+            text=MESSAGES["message_bot_updating"]
         )
 
     if reply_message:
