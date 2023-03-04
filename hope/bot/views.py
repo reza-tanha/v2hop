@@ -104,7 +104,7 @@ def message_update(update):
                 chat_id, MESSAGES['message_voucher_code_len_error']
             )
         try:
-            text = unidecode(text)
+            text = int(text)
         except:
             return telegram.send_Message(
                 chat_id, MESSAGES['message_voucher_code_type_error']
