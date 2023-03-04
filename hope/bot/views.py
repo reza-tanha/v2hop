@@ -291,22 +291,27 @@ def callback_query_update(update):
             reply_markup=show_country_buttons(section="test")
         )
 
-    elif 'admin_suport:' in callback_data:
-        data_ = callback_data.split(":")
-        user_obj.update(step=f"user_support_message:{data_[1]}")
-        return telegram.send_Message(
+    elif callback_data in ['show_panels', "back_to_choice_volume"]:
+        telegram.editMessageText(
             callback_chat_id,
-            MESSAGES['supported_message_'],
-            reply_markup=bot_end_button_suport()
+            callback_message_id,
+            MESSAGES['message_choice_volume'],
+            reply_markup=show_volume_buttons()
+        )
+
+    elif callback_data in ["my_service", "back_to_choice_service"]:
+        configs = ProxyConfig.objects.filter(
+            user=user,
+            is_use=True,
+            volume__gt=150
         )
 
     elif callback_data.startswith("plan_volume"):
         selected_volume = int(callback_data.split(":")[-1]) * 1024
-        volume_user = int(callback_data.split(":")[-1]) * 1024
         return telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
-            MESSAGES['message_get_country'],
+            MESSAGES['message_choice_country'],
             reply_markup=show_country_buttons(volume=selected_volume)
         )
 
