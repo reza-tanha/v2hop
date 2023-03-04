@@ -41,7 +41,9 @@ def webhook(request):
 def message_update(update):
     telegram = Telegram()
     update = update['message']
-    text = update['text']
+    text = update.get('text')
+    if not text:
+        return
     reply_message = update.get('reply_to_message', None)
     user_id = update['from']['id']
     first_name = update['from']['first_name']
