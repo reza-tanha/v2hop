@@ -72,7 +72,7 @@ def message_update(update):
 
     if reply_message:
         text_reply = reply_message['text']
-        user_user_id = int(text_reply.split("name :")[0].split(":")[1])
+        user_user_id = int(text_reply.split("name:")[0].split(":")[1])
         if "user_id" in text_reply and "name" in text_reply and "username" in text_reply:
             return telegram.copy_Message(
                 user_user_id,
