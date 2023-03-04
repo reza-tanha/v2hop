@@ -3,7 +3,7 @@ from hope.bot.v2ray_api import XUIAPI
 from .functions import *
 
 
-def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int, text: str):
+def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int, text: str, message_id: int):
     keys = show_admin_keyboard(True)
     keys.update(show_admin_back_keyboard(True))
     msg = ""
@@ -47,6 +47,13 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
         user_obj.update(step="Admin_Pannel_Decr_Wallet")
         msg = MESSAGES["message_admin_decrease_walet"]
 
+    elif text == keys.get("send_universal_msg"):
+        return telegram.send_Message(
+            chat_id=chat_id,
+            text=MESSAGES["message_admin_send_universal_msg"],
+            reply_markup=show_admin_send_msg_buttons())
+
+
     elif text == keys.get("back"):
         user_obj.update(step="Admin_Pannel")
         return telegram.send_Message(
@@ -82,7 +89,8 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
 
     elif user.step.endswith("User_Info"):
         try:
-            user = User.objects.filter(user_id=text).first()
+            text = text.strip("@")
+            user = User.objects.filter(Q(user_id=text) | Q(username=text)).first()
             if user:
                 balance = user.user_balance
                 text = get_user_info_msg(user, balance)
@@ -146,4 +154,20 @@ def management(user_obj: "User", user: dict, telegram: "Telegram", chat_id: int,
         return telegram.send_Message(
             chat_id=chat_id,
             text=text
+        )
+
+    elif user.step.endswith("Send_One_Msg"):
+        dst_user_id, *text_msg = text.split("\n")
+        return telegram.send_Message(
+            chat_id=dst_user_id,
+            text="\n".join(text_msg),
+            reply_markup=show_admin_keyboard()
+        )
+
+    elif user.step.endswith("Send_All_Msg"):
+        msg = f"<b>from_chat_id:</b> <code>{chat_id}</code>\n<b>message_id:</b> <code>{message_id}</code>"
+        return telegram.send_Message(
+            chat_id=chat_id,
+            text=msg,
+            reply_markup=show_admin_keyboard()
         )
