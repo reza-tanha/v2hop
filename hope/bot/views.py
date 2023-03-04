@@ -51,15 +51,25 @@ def message_update(update):
     message_id = update['message_id']
     user_obj = User.objects.filter(user_id=user_id)
     user = user_obj.first()
-    bot = BotUpdate.objects.all().first()
-    
-    
-    if (bot.update is False) and (user.is_staff is False):
+    bot = BotUpdateStatus.objects.first()
+
+    if not user:
+        user = User.objects.create_user(
+            username=str(user_id),
+            password=str(user_id),
+            first_name=first_name,
+            last_name=last_name,
+            user_id=user_id,
+            step="home"
+        )
+        user.save()
+
+    if bot.is_update and not user.is_staff:
         return telegram.send_Message(
             chat_id,
             "در حال اپدیت ربات هستیم لطفا منتظر باشید ❤️",
         )
-        
+
     if reply_message:
         text_reply = reply_message['text']
         user_user_id = int(text_reply.split("name :")[0].split(":")[1])
@@ -69,20 +79,9 @@ def message_update(update):
                 chat_id,
                 message_id
             )
-               
-        
+
     if text == '/start':
         user_obj.update(step="Home")
-        if not user:
-            user = User.objects.create_user(
-                username=str(user_id),
-                password=str(user_id),
-                first_name=first_name,
-                last_name=last_name,
-                user_id=user_id,
-                step="home"
-            )
-            user.save()        
         return telegram.send_Message(
             chat_id,
             MESSAGES["start_message"],
