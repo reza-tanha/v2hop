@@ -57,7 +57,7 @@ def message_update(update):
 
     if not user:
         user = User.objects.create_user(
-            username=str(user_id),
+            username=str(user_id) if not update["from"].get("username") else update["from"]["username"],
             password=str(user_id),
             first_name=first_name,
             last_name=last_name,
