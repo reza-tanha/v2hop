@@ -233,12 +233,12 @@ def callback_query_update(update):
     callback_text = update["message"]["text"]
     user_obj = User.objects.filter(user_id=callback_chat_id)
     user = user_obj.first()
-    
-    bot = BotUpdate.objects.all().first()
-    if (bot.update is False) and (user.is_staff is False):
+    bot = BotUpdateStatus.objects.filter(id=1)
+
+    if bot.first().is_update and user.is_staff is False:
         return telegram.send_Message(
             callback_chat_id,
-            "در حال اپدیت ربات هستیم لطفا منتظر باشید ❤️",
+            MESSAGES["message_bot_updating"]
         )
     if callback_data == 'my_account_balance':
         telegram.editMessageText(
