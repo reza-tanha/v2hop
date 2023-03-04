@@ -17,8 +17,8 @@ async def get_users():
     """Get all users from db where ads msg is not sent"""
     async with aiosqlite.connect(db_name) as db:
         cursor = await db.cursor()
-        query = "SELECT user_id FROM account_user WHERE is_superuser=1"
-        #query = "SELECT user_id FROM account_user WHERE is_sent_ads=0"
+        #query = "SELECT user_id FROM account_user WHERE is_superuser=1"
+        query = "SELECT user_id FROM account_user WHERE is_sent_ads=0"
         await cursor.execute(query,)
         all_users = await cursor.fetchall()
         return all_users
@@ -30,7 +30,6 @@ async def update_ads(chat_id: int):
         try:
             cursor = await db.cursor()
             time_now = datetime.now()
-            print(time_now)
             query = f"UPDATE account_user SET is_sent_ads=1, sent_ads_time='{time_now}' WHERE user_id={chat_id}"
             await cursor.execute(query)
             await db.commit()
