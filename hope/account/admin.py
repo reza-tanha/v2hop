@@ -7,13 +7,8 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    # def get_queryset(self, request):
-    #     queryset = super().get_queryset(request).select_related("factory")
-    #     return queryset
-    
     list_display = ("id", "username", "user_id", "step")
-    list_filter = ("username", "user_id")
-
+    list_filter = ("username", "user_id", "is_sent_ads", "sent_ads_time")
     fieldsets = (
         (None, {
             'fields': ('user_id', 'password')
@@ -30,10 +25,7 @@ class UserAdmin(BaseUserAdmin):
                 'groups', 'user_permissions')
         })
     )
+    search_fields = ('email', 'first_name',"username", "user_id", "is_admin")
+    ordering = ('id',)
 
-    search_fields = ('email', 'first_name',"username", "time_zone", "is_admin", "is_verify_operator", "factory__name")
-    ordering = ('id', 'email')
-    list_filter
-    
-    
 admin.site.register(Balance)
