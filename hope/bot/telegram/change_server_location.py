@@ -21,10 +21,9 @@ class ChangeLocation:
         """Calculate the remaining amount of user traffic"""
         user_config = xray.get_config_uuid(proxy_config_uuid)
         if not user_config:
-            print("not?")
             return
         new_volume = user_config['total'] - (user_config['down'] + user_config['up'])
-        return user_config, int(new_volume / 1024 / 1024)
+        return user_config, int(user_config['total'] / 1024 ), int(new_volume / 1024)
 
 
     def validate_config(self, proxy_config: object) -> bool:
@@ -48,23 +47,23 @@ class ChangeLocation:
     def update_user_balance(self, last_server: object, plan: object):
         """Update user balance"""
         if not last_server.is_tunnel and self.new_server.is_tunnel:
-            mb_volume_price = plan.price / plan.volume
-            new_balance = mb_volume_price * self.new_volume
+            kilobytes_volume_price = plan.price / self.total_volume
+            new_balance = kilobytes_volume_price * self.new_volume
             if self.user.user_balance.balance < new_balance:
                 self.telegram.send_AnswerCallbackQuery(
                     self.callback_id,
                     text=MESSAGES["message_not_balance"]
                 )
                 return False
-            
+
             self.user.user_balance.balance -= new_balance
             self.user.user_balance.save()
             return True
 
         if last_server.is_tunnel and not self.new_server.is_tunnel:
-            mb_volume_price = plan.price / plan.volume
-            plan_price = mb_volume_price * self.new_volume
-            self.user.user_balance.balance += plan_price
+            kilobytes_volume_price = plan.price / self.total_volume
+            new_balance = kilobytes_volume_price * self.new_volume
+            self.user.user_balance.balance += new_balance
             self.user.user_balance.save()
             return True
 
@@ -124,7 +123,9 @@ class ChangeLocation:
         if not data:
             return
 
-        self.user_config, self.new_volume = data
+        self.user_config, self.total_volume, self.new_volume = data
+        print("new volume is ", self.total_volume, self.new_volume)
+        return
         balance = self.update_user_balance(last_server, plan)
         if not balance:
             return
