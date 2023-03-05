@@ -9,16 +9,6 @@ from datetime import datetime
 User = get_user_model()
 
 
-def format_bytes(size):
-    power = 2**10
-    n = 0
-    power_labels = {0:'', 1:'KB', 2:'MB', 3:'GB'}
-    while size > power:
-        size /= power
-        n += 1
-    return f"{power_labels[n]} {round(size)}"
-
-
 def show_start_home_buttons(user_id=0):
     user_balance = Balance.objects.get(user__user_id=user_id)
     balance = f"{int(user_balance.balance / 10):,}"
@@ -196,8 +186,8 @@ def show_services_button(configs: list, user_id: int, start_range, next_range):
     return json.dumps(markup)
 
 
-def show_config_info(config, section: str = 0):
-    volume = format_bytes(config[2])
+def show_config_info(config, section: str = 0, new_volume: int =0):
+    volume = convert_size(new_volume)
     proxy = config[0]
     text = f"""
         \n🎗  کانفیگ {'تست' if section else ''} شما :\
@@ -257,7 +247,7 @@ def calculat_volume(conf, down, up, total, location, expire_date, status: bool =
         \nا---------------------------------------------------------------\
         \n<b>🎗 مقدار اپلود : </b>{convert_size(up)}\
         \nا---------------------------------------------------------------\
-        \n<b>🎗حجم کلی : </b>{convert_size(total)}\
+        \n<b>🎗حجم کل سرویس : </b>{convert_size(total)}\
         \nا---------------------------------------------------------------\
         \n<b>🎗 لوکیشن : </b>{location}\
         \nا---------------------------------------------------------------\
