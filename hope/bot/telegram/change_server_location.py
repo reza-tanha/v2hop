@@ -123,9 +123,7 @@ class ChangeLocation:
         if not data:
             return
 
-        self.user_config, self.total_volume, self.new_volume = data
-        print("new volume is ", self.total_volume, self.new_volume)
-        return
+        self.user_config, self.total_volume, self.new_volume = data                
         balance = self.update_user_balance(last_server, plan)
         if not balance:
             return
