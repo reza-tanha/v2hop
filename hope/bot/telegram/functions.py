@@ -16,7 +16,7 @@ def show_start_home_buttons(user_id=0):
         'inline_keyboard': [
             [
                 {'text': '🎁 تست VPN', 'callback_data': 'test_config'},
-                {'text': '💳 خرید VPN', 'callback_data': 'show_panels'}
+                {'text': '💸 خرید VPN', 'callback_data': 'show_panels'}
             ],
             [
                 {'text': f'💰 موجودی : {balance} تومان',
