@@ -79,7 +79,8 @@ class ChangeLocation:
                 username=self.new_server.username,
                 password=self.new_server.password
             )
-            return new_xray.getSession(self.user_config['expiryTime'], self.new_volume, self.new_uuid, True)
+            data = new_xray.getSession(self.user_config['expiryTime'], int(self.new_volume/1024), self.new_uuid, True)
+            return data
         except:
             return
 
@@ -90,20 +91,19 @@ class ChangeLocation:
         new_proxy_config = ProxyConfig(
             proxy_hash=select_config[0],
             server=self.new_server,
-            volume=self.new_volume,
+            volume=proxy_config.volume,
             is_use=True,
             user=self.user,
             uuid=self.new_uuid,
             last_num_change=num_change_location,
             expire_date=proxy_config.expire_date
-        )    
+        )
         new_proxy_config.save()
         proxy_config.delete()
-        
         return self.telegram.editMessageText(
             self.chat_id,
             self.message_id,
-            show_config_info(select_config),
+            show_config_info(select_config, new_volume=self.new_volume*1024),
             reply_markup=show_start_home_buttons(self.chat_id),
         )
 
@@ -118,12 +118,11 @@ class ChangeLocation:
             username=last_server.username,
             password=last_server.password
         )
-        
         data = self.calculate_new_volume(xray, proxy_config.uuid)
         if not data:
             return
 
-        self.user_config, self.total_volume, self.new_volume = data                
+        self.user_config, self.total_volume, self.new_volume = data
         balance = self.update_user_balance(last_server, plan)
         if not balance:
             return
