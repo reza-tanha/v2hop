@@ -370,9 +370,9 @@ def show_admin_del_service_keyboard(data):
 
 def get_user_info_msg(user, balance):
     """Generage user information message for admin section"""
-    total_active = user.user_configvpn.filter(
+    total_active = user.proxy_config.filter(
         expire_date__gte=datetime.now().date()).count()
-    total_deactive = user.user_configvpn.filter(
+    total_deactive = user.proxy_config.filter(
         expire_date__lte=datetime.now().date()).count()
     balance = f"{int(balance.balance / 10):,}"
 
