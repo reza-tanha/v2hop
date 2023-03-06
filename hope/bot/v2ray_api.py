@@ -11,10 +11,10 @@ class XUIAPI:
         self.server = server
         self.username = username
         self.password = password
-        self.login_url = f"http://{server}:54321/admin/login"
-        self.add_inbounds = f"http://{server}:54321/admin/xui/inbound/add"
-        self.list_inbounds = f"http://{server}:54321/admin/xui/inbound/list"
-        self.delete_inbounds = f"http://{server}:54321/admin/xui/inbound/del/"
+        self.login_url = f"http://{server}:{SERVERS_PORT}/uxadm/login"
+        self.add_inbounds = f"http://{server}:{SERVERS_PORT}/uxadm/xui/inbound/add"
+        self.list_inbounds = f"http://{server}:{SERVERS_PORT}/uxadm/xui/inbound/list"
+        self.delete_inbounds = f"http://{server}:{SERVERS_PORT}/uxadm/xui/inbound/del/"
         self.session = requests.Session()
         if PERFECTMONEY_PROXY:
             self.session.proxies = PERFECTMONEY_PROXY
