@@ -1,12 +1,26 @@
 import os
 
-CHANNEL_HELP = 'Helpcx'
-CHANNEL_SPONSER = 'VPN443IR'
-USER_SUPORTE = 'ADM_VPN443IR'
-ADMINS_LIST = [219171506, ]
+PROXY_HTTP = os.environ.get('PROXY_HTTP')
+PROXY_SOCKS = os.environ.get('PROXY_SOCKS')
+
+# Perfect Money
+PERFECTMONEY_USER = os.environ.get('PERFECTMONEY_USER')
+PERFECTMONEY_PASSWORD = os.environ.get('PERFECTMONEY_PASSWORD')
+PERFECTMONEY_USD = os.environ.get('PERFECTMONEY_USD')
+PERFECTMONEY_PROXY = {"http": "socks5h://"+PROXY_SOCKS,
+                      "https": "socks5h://"+PROXY_SOCKS} if PROXY_SOCKS else False
+
+# Channel
 TOKEN = os.environ.get('TOKEN')
-PROXY_HTTP = None  # '127.0.0.1:2021'
-PROXY_SOCKS = os.environ.get('PROXY')
+BOT_USERNAME = os.environ.get('BOT_USERNAME')
+CHANNEL_PAYED = os.environ.get('CHANNEL_PAYED')
+CHANNEL_PAYED_CONFIG = os.environ.get('CHANNEL_PAYED_CONFIG')
+CHANNEL_HELP = os.environ.get('CHANNEL_HELP')
+CHANNEL_SPONSER = os.environ.get('CHANNEL_SPONSER')
+USER_SUPORTE = os.environ.get('USER_SUPORTE')
+
+
+
 MESSAGES = {
     "start_message": "💫 <b>سلام به ربات V2Shop  خوش آمدید</b> 💫\n➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖\n\nلطفا برای ادامه روی یکی از گزینه زیر کلیک نمایید 👇🏻\n.",
     "message_error_test_config": "کاربر گرامی شما قبلا کانفیگ تست خود را دریافت کرده اید . شما هر هفته یک بار می توانید کانفیگ تست دریافت کنید ❗️❗️\n‌‌‌‌",
@@ -62,14 +76,3 @@ MESSAGES = {
     "message_admin_send_to_one_msg": "📢 Send Msg\n➖➖➖➖➖➖➖➖➖➖➖➖➖\nSend your message to forward to the user\n\nPlease write your userID in the first line and text msg in the following lines",
     "message_admin_send_msg_success": "📢 Send Msg\n➖➖➖➖➖➖➖➖➖➖➖➖➖\nYour message has been successfully sent ✅",
 }
-
-
-PERFECTMONEY_USER = "15226661"
-PERFECTMONEY_PASSWORD = "reza2020"
-PERFECTMONEY_USD = "U42122089"
-PERFECTMONEY_PROXY = None
-PERFECTMONEY_PROXY = {"http": "socks5h://"+PROXY_SOCKS,
-                      "https": "socks5h://"+PROXY_SOCKS} if PROXY_SOCKS else False
-BOT_USERNAME = "VPN443bot"
-CHANNEL_PAYED = -1001816163876
-CHANNEL_PAYED_CONFIG = -1001813798029
