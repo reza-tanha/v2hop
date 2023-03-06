@@ -215,11 +215,15 @@ def message_update(update):
                 reply_markup=show_support_buttons()
             )
         msg = f"user_id: <code>{chat_id}</code>\nname: <code>{first_name}</code>\nusername: @{username}\n➖➖➖➖➖➖➖➖➖"
-        return telegram.send_Message(
+        telegram.send_Message(
             chat_id=selected_admin,
             text=msg,
             reply_to_message_id=response['result']['message_id'],
             reply_markup=show_block_unblock_user_buttons(chat_id)
+        )
+        return telegram.send_Message(
+            chat_id=chat_id,
+            text=MESSAGES["message_support_send_success"]
         )
 
 
