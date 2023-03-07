@@ -18,6 +18,7 @@ CHANNEL_PAYED_CONFIG = os.environ.get('CHANNEL_PAYED_CONFIG')
 CHANNEL_HELP = os.environ.get('CHANNEL_HELP')
 CHANNEL_SPONSER = os.environ.get('CHANNEL_SPONSER')
 USER_SUPORTE = os.environ.get('USER_SUPORTE')
+SERVERS_PORT =  os.environ.get('SERVERS_PORT')
 
 
 

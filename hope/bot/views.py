@@ -138,7 +138,8 @@ def message_update(update):
         perfect_money_obj = PerfectMoney(
             PERFECTMONEY_USER,
             PERFECTMONEY_PASSWORD,
-            proxies=PERFECTMONEY_PROXY)
+            #proxies=PERFECTMONEY_PROXY)
+        )
         pay_perfect = perfect_money_obj.voucher_activation(
             PERFECTMONEY_USD,
             perfect.voucher_code,
@@ -393,7 +394,7 @@ def callback_query_update(update):
             password=server.password
         )
         all_configs_in_server = xray.get_count_config()
-        if len(all_configs_in_server) >= 50:
+        if len(all_configs_in_server) >= 30:
             server.down = True
             server.save()
             telegram.send_AnswerCallbackQuery(
@@ -435,7 +436,7 @@ def callback_query_update(update):
         config.save()
         telegram.editMessageText(
             callback_chat_id, callback_message_id,
-            show_config_info(select_config),
+            show_config_info(select_config, new_volume=plan.volume*1024*1024),
             reply_markup=show_start_home_buttons(callback_chat_id)
         )
         telegram.send_Message(
