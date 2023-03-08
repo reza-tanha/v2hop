@@ -147,8 +147,8 @@ def message_update(update):
         contract = contract.first()
         
         chtor = ChangeToRial()
-        res = chtor.change(contract.symbol+"IRT")
-        new_balance = int(int(res) * info['amount'])        
+        res = chtor.change(contract.symbol)
+        new_balance = int(int(int(res) * 10) * info['amount'])        
         user.user_balance.balance += new_balance
         user.user_balance.save()
         balance = f"<b>{int(user.user_balance.balance / 10):,}</b>"

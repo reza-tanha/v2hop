@@ -36,15 +36,37 @@ class TTC:
 # print(ttc.check("1ff57b269d245ebae352a554be00f9e952e517f2ba64e19aaa6f381067dff5aa"))
 
 
+# class ChangeToRial1:
+#     def __init__(self) -> None:
+#         self.base_api = "https://api.nobitex.ir/v2/orderbook/"
+        
+#     def change(self, symbol) -> dict:
+#         try : 
+#             req = requests.get(self.base_api + symbol)
+#             js = req.json()
+#             return js['lastTradePrice']
+#         except:
+#             return False
+    
+    
 class ChangeToRial:
     def __init__(self) -> None:
-        self.base_api = "https://api.nobitex.ir/v2/orderbook/"
+        self.base_api = "https://api.bitpin.ir/v1/mkt/markets/"
         
     def change(self, symbol) -> dict:
+        symbol = symbol+"_IRT"
         try : 
-            req = requests.get(self.base_api + symbol)
+            req = requests.get(self.base_api)
             js = req.json()
-            return js['lastTradePrice']
+            for code in js['results']:
+                if code.get("code") == symbol:
+                    return code.get("price", None)
+            # return js['lastTradePrice']
         except:
             return False
     
+    
+# c = ChangeToRial()
+# print(c.change("DOGE"))
+#USDT #USDC #BUSD #BTT #TRX #BTC #ETH #DOGE
+# c.change("USDJ")
