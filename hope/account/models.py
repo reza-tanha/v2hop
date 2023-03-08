@@ -55,5 +55,14 @@ class Balance(models.Model):
         blank=True
     )
 
+    wallat = models.CharField(
+        max_length=40,
+        verbose_name="Usser Wallat",
+        unique=True,
+        default=None,
+        blank=True,
+        null=True
+    )
+
     def __str__(self) -> str:
-        return f"{str(self.user.user_id)} : {self.user.first_name}"
+        return f"{str(self.user)}"

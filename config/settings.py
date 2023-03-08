@@ -87,6 +87,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-FORCE_SCRIPT_NAME = os.environ.get("SCRIPT_NAME_")
+# FORCE_SCRIPT_NAME = os.environ.get("SCRIPT_NAME_")
 STATIC_ROOT = BASE_DIR / "static_root"
 APPEND_SLASH = False

@@ -18,7 +18,7 @@ from perfectmoney import PerfectMoney
 from datetime import timedelta, datetime
 from uuid import uuid4
 import pytz
-
+from .tronscan import *
 
 User = get_user_model()
 logging = BotLoger()
@@ -99,89 +99,100 @@ def message_update(update):
             text=MESSAGES["message_admin_section"],
             reply_markup=show_admin_keyboard())
 
-    if user.step == 'GET_VOUCHER_CODE':
-        perfect = get_object_or_404(PerfectMonyPayment, user=user, is_tmp=True)
-        if len(text) != 10:
+    if user.step == 'GET_TRANSACTION_ID':
+        if len(text) != 64:
             return telegram.send_Message(
-                chat_id, MESSAGES['message_voucher_code_len_error']
+                chat_id, MESSAGES['message_transactionid_len_error']
             )
         try:
-            text = int(text)
+            user_payment = UserPayments.objects.create(
+                user=user,
+                transaction_id=text,            
+            )
+            user_payment.save()
         except:
             return telegram.send_Message(
-                chat_id, MESSAGES['message_voucher_code_type_error']
+                chat_id, MESSAGES['message_transaction_id_invalid']
             )
-        perfect.voucher_code = text
-        perfect.save()
-        user_obj.update(step='GET_VOUCHER_ACTIVE')
+        ttc = TTC()
+        info = ttc.check(text)
+        
+        if not info:
+            return telegram.send_Message(
+                chat_id, "تراکنش نامعتبر"
+            )
+        
+        if info['ownerAddress'] != user.user_balance.wallat:
+            return telegram.send_Message(
+                chat_id, "تراکنش نامعتبر"
+            )
+                  
+        wallat = Wallat.objects.filter(wallat=info['toAddress'])        
+        if not wallat:
+            return telegram.send_Message(
+                chat_id, "تراکنش نامعتبر"
+            )
+        # return
+        
+        if info['contractRet'] != "SUCCESS" and info['srConfirmList'] < 6 :
+            return telegram.send_Message(
+                chat_id, MESSAGES['message_transaction_not_verified']
+            )
+            
+        contract = ContractAddres.objects.filter(contract_addres=info["contract_address"])
+        if not contract:
+            return telegram.send_Message(
+                chat_id, "تراکنش نامعتبر"
+            )
+        contract = contract.first()
+        
+        chtor = ChangeToRial()
+        res = chtor.change(contract.symbol)
+        new_balance = int(int(res) * info['amount'])        
+        user.user_balance.balance += new_balance
+        user.user_balance.save()
+        balance = f"<b>{int(user.user_balance.balance / 10):,}</b>"
+        user_payment.status=True
+        user_payment.ownerAddress=info['ownerAddress']
+        user_payment.amount=info['amount']
+        user_payment.contract_address=info['contract_address']
+        user_payment.contractRet=info['contractRet']
+        user_payment.srConfirmList=info['srConfirmList']
+        user_payment.save()
+        
         return telegram.send_Message(
             chat_id,
-            MESSAGES['message_get_voucher_activate_code'],
+            MESSAGES['message_success_charjid'].format(balance),
             reply_markup=back_to_home_button()
         )
 
-    if user.step == 'GET_VOUCHER_ACTIVE':
-        perfect = get_object_or_404(PerfectMonyPayment, user=user, is_tmp=True)
-        if len(text) != 16:
+    
+    if user.step == 'GET_USER_WALLAT':
+
+        if len(text) != 34:
             return telegram.send_Message(
                 chat_id,
-                MESSAGES['message_voucher_activate_len_error']
+                MESSAGES['message_get_user_wallat_not_valid']
             )
-        try:
-            text = int(text)
-        except:
-            return telegram.send_Message(
-                chat_id, MESSAGES['message_voucher_code_len_error']
-            )   
-        perfect.voucher_active = text
-        perfect.save()
-        perfect_money_obj = PerfectMoney(
-            PERFECTMONEY_USER,
-            PERFECTMONEY_PASSWORD,
-            #proxies=PERFECTMONEY_PROXY)
-        )
-        pay_perfect = perfect_money_obj.voucher_activation(
-            PERFECTMONEY_USD,
-            perfect.voucher_code,
-            perfect.voucher_active
-        )
-        if not pay_perfect:
-            telegram.send_Message(
-                chat_id,
-                MESSAGES['message_voucher_activate_error'],
-                reply_markup=show_start_home_buttons(chat_id)
-            )
-            user_obj.update(step='Home')
-            return
-
-        logging.addlog("pays.log",
-            f"user id : {user_id}, perfect info {perfect.voucher_code}:{perfect.voucher_active}, {pay_perfect}")
-
-        price_pay = float(pay_perfect.get("VOUCHER_AMOUNT"))
-        usdtorial = PriceSettings.objects.all().first()
-        user.user_balance.balance += int(price_pay * usdtorial.price)
+            
+        user.user_balance.wallat=text
         user.user_balance.save()
-        user_obj.update(step="Home")
-        telegram.send_Message(
-            chat_id,
-            MESSAGES['message_success_payement'],
-            reply_markup=show_start_home_buttons(chat_id)
+        user_obj.update(step='GET_TRANSACTION_ID')
+        logging.addlog(
+            "add_wallat.log",
+            f"user id : {user_id} ,  wallat : {text}"
         )
-        perfect.status = True
-        perfect.is_tmp = False
-        perfect.save()
+        balance = f"<b>{int(user.user_balance.balance / 10):,}</b>"
+        wallat = Wallat.objects.all()
+        walets  = ""
+        for w in wallat:
+            walets = walets + "<code>" + w.wallat + "</code>" + "\n"
+            
         return telegram.send_Message(
-            CHANNEL_PAYED,
-            buy_plan_config_message_log(
-                chat_id,
-                first_name,
-                username,
-                datetime.now(),
-                int(price_pay * usdtorial.price),
-                price_pay,
-                perfect.voucher_code,
-                perfect.voucher_active)
-        )
+            chat_id,
+            MESSAGES['message_get_voucher_code'].format(balance) + walets,
+            reply_markup=back_to_home_button()
+        )        
 
     if user.step.startswith("Admin_Pannel"):
         management(user_obj, user, telegram, chat_id, text, message_id)
@@ -249,26 +260,38 @@ def callback_query_update(update):
         )
 
     if callback_data == 'my_account_balance':
+        if not user.user_balance.wallat:
+            user_obj.update(step="GET_USER_WALLAT")
+            return telegram.editMessageText(
+                callback_chat_id,
+                callback_message_id,
+                MESSAGES["message_get_user_wallat"],
+                reply_markup=back_to_home_button()
+            )
+        
         balance = f"<b>{int(user.user_balance.balance / 10):,}</b>"
+        wallat = Wallat.objects.all()
+        walets  = ""
+        for w in wallat:
+            walets = walets + "<code>" + w.wallat + "</code>" + "\n"
+            
         telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
-            MESSAGES['message_get_voucher_code'].format(balance),
+            MESSAGES['message_get_voucher_code'].format(balance) + walets,
             reply_markup=back_to_home_button()
-        )
-        user_obj.update(step="GET_VOUCHER_CODE")
-        tmp_perfect = PerfectMonyPayment.objects.filter(user=user, is_tmp=True)
-        tmp_perfect.delete()
-        perfect = PerfectMonyPayment(user=user, is_tmp=True)
-        perfect.save()
+        )        
+        user_obj.update(step="GET_TRANSACTION_ID")
 
     elif callback_data == "back_to_menu":
+        user_obj.update(step="home")
         return telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
             MESSAGES["start_message"],
             reply_markup=show_start_home_buttons(callback_chat_id)
         )
+        
 
     elif callback_data == 'support_section':
         telegram.editMessageText(
