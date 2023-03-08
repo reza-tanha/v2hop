@@ -147,7 +147,7 @@ def message_update(update):
         contract = contract.first()
         
         chtor = ChangeToRial()
-        res = chtor.change(contract.symbol)
+        res = chtor.change(contract.symbol+"IRT")
         new_balance = int(int(res) * info['amount'])        
         user.user_balance.balance += new_balance
         user.user_balance.save()
@@ -187,10 +187,14 @@ def message_update(update):
         walets  = ""
         for w in wallat:
             walets = walets + "<code>" + w.wallat + "</code>" + "\n"
-            
+        contract = ContractAddres.objects.all()
+        contract_t  = "\nلیست ارز های پشتیبانی شده در شبکه ترون ⬇️\n"
+        for c in contract:
+            contract_t = contract_t + "<code>" + c.symbol + "</code>" + "\n"
+        
         return telegram.send_Message(
             chat_id,
-            MESSAGES['message_get_voucher_code'].format(balance) + walets,
+            MESSAGES['message_get_voucher_code'].format(balance) + walets + contract_t,
             reply_markup=back_to_home_button()
         )        
 
@@ -274,11 +278,15 @@ def callback_query_update(update):
         walets  = ""
         for w in wallat:
             walets = walets + "<code>" + w.wallat + "</code>" + "\n"
-            
+        contract = ContractAddres.objects.all()
+        contract_t  = "\nلیست ارز های پشتیبانی شده در شبکه ترون ⬇️\n"
+        for c in contract:
+            contract_t = contract_t + "<code>" + c.symbol + "</code>" + "\n"
+        
         telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
-            MESSAGES['message_get_voucher_code'].format(balance) + walets,
+            MESSAGES['message_get_voucher_code'].format(balance) + walets + contract_t,
             reply_markup=back_to_home_button()
         )        
         user_obj.update(step="GET_TRANSACTION_ID")
