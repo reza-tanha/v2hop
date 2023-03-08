@@ -27,7 +27,7 @@ class ContractAddres(models.Model):
     
     symbol = models.CharField(
         max_length=15,
-        verbose_name="Symbol : USDTIRT, TRXIRT, "
+        verbose_name="Symbol : USDT, TRX, "
     )
     
     contract_addres = models.CharField(
