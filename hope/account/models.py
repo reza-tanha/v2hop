@@ -44,7 +44,7 @@ class Balance(models.Model):
         blank=True
     )
 
-    balance = models.IntegerField(
+    balance = models.BigIntegerField(
         default=0,
         verbose_name="Balance"
     )
