@@ -141,13 +141,13 @@ def show_country_buttons(volume: str = 0, section="buy"):
     countries = Server.objects.filter(down=False)
     inline = []
     if countries:
-        inline.append(
+        inline = [
             [{
                 'text': country.name,
                 'callback_data': f"{section}_plan_country_{country.domain_country}:{volume}"
             }]
             for country in countries
-        )
+        ]
     inline.append(
         [{
             'text': '🔙 بازگشت 🔙' if section == "buy" else "🔝 بازگشت به منو",
@@ -279,13 +279,13 @@ def show_change_location_country(id):
     countries = Server.objects.filter(down=False)
     inline = []
     if countries:
-        inline.append(
+        inline = [
             [{
                 'text': country.name,
                 'callback_data': f"change_location_country_{id}:{country.domain_country}"
             }]
             for country in countries
-        )
+        ]
     inline.append(
         [{
             'text': '🔝 بازگشت', 'callback_data': 'back_to_choice_service'
