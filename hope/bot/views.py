@@ -4,6 +4,7 @@ from .telegram.configs import *
 from .telegram.functions import *
 from .telegram.admin_panel import management
 from .telegram.change_server_location import *
+from .validator.payment_validator import PaymentValidator
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -100,103 +101,58 @@ def message_update(update):
             reply_markup=show_admin_keyboard())
 
     if user.step == 'GET_TRANSACTION_ID':
-        if len(text) != 64:
+        py_validator = PaymentValidator(user, UserPayments, Wallet, TronScan, text, MESSAGES)
+        status, data = py_validator.main()
+        if not status:
             return telegram.send_Message(
-                chat_id, MESSAGES['message_transactionid_len_error']
+                chat_id=chat_id,
+                text=data,
+                reply_markup=back_to_home_button()
             )
-        try:
-            user_payment = UserPayments.objects.create(
-                user=user,
-                transaction_id=text,            
-            )
-            user_payment.save()
-        except:
-            return telegram.send_Message(
-                chat_id, MESSAGES['message_transaction_id_invalid']
-            )
-        ttc = TTC()
-        info = ttc.check(text)
-        
-        if not info:
-            return telegram.send_Message(
-                chat_id, "تراکنش نامعتبر"
-            )
-        
-        if info['ownerAddress'] != user.user_balance.wallat:
-            return telegram.send_Message(
-                chat_id, "تراکنش نامعتبر"
-            )
-                  
-        wallat = Wallat.objects.filter(wallat=info['toAddress'])        
-        if not wallat:
-            return telegram.send_Message(
-                chat_id, "تراکنش نامعتبر"
-            )
-        # return
-        
-        if info['contractRet'] != "SUCCESS" and info['srConfirmList'] < 6 :
-            return telegram.send_Message(
-                chat_id, MESSAGES['message_transaction_not_verified']
-            )
-            
-        contract = ContractAddres.objects.filter(contract_addres=info["contract_address"])
-        if not contract:
-            return telegram.send_Message(
-                chat_id, "تراکنش نامعتبر"
-            )
-        contract = contract.first()
-        
-        chtor = ChangeToRial()
-        res = chtor.change(contract.symbol)
-        new_balance = int(int(int(res) * 10) * info['amount'])        
+        contract, amount = contract.first()
+        exchange = Exchange()
+        price = exchange.get_symbol_price(contract.symbol)
+        new_balance = (price * 10) * amount
         user.user_balance.balance += new_balance
         user.user_balance.save()
-        balance = f"<b>{int(user.user_balance.balance / 10):,}</b>"
-        user_payment.status=True
-        user_payment.ownerAddress=info['ownerAddress']
-        user_payment.amount=info['amount']
-        user_payment.contract_address=info['contract_address']
-        user_payment.contractRet=info['contractRet']
-        user_payment.srConfirmList=info['srConfirmList']
-        user_payment.save()
-        
+        balance = f"<b>{int(user.user_balance.balance//10):,}</b>"
         return telegram.send_Message(
             chat_id,
             MESSAGES['message_success_charjid'].format(balance),
             reply_markup=back_to_home_button()
         )
 
-    
-    if user.step == 'GET_USER_WALLAT':
-
+    if user.step == 'GET_USER_wallet':
         if len(text) != 34:
             return telegram.send_Message(
-                chat_id,
-                MESSAGES['message_get_user_wallat_not_valid']
+                chat_id=chat_id,
+                text=MESSAGES['message_user_wallet_invalid_error']
             )
-            
-        user.user_balance.wallat=text
+        else:
+            telegram.send_Message(
+                chat_id,
+                MESSAGES['message_success_add_wallet']
+            )
+
+        user.user_balance.wallet = text
         user.user_balance.save()
         user_obj.update(step='GET_TRANSACTION_ID')
-        logging.addlog(
-            "add_wallat.log",
-            f"user id : {user_id} ,  wallat : {text}"
-        )
+        logging.addlog("add_wallet.log", f"user id: {user_id}, wallet: {text}")
         balance = f"<b>{int(user.user_balance.balance / 10):,}</b>"
-        wallat = Wallat.objects.all()
+        wallet = Wallet.objects.all()
         walets  = ""
-        for w in wallat:
-            walets = walets + "<code>" + w.wallat + "</code>" + "\n"
+        for w in wallet:
+            walets += "<code>" + w.wallet + "</code>" + "\n"
         contract = ContractAddres.objects.all()
-        contract_t  = "\nلیست ارز های پشتیبانی شده در شبکه ترون ⬇️\n"
+        contract_t  = "\nلیست ارز های پشتیبانی شده در شبکه ترون 👇🏻\n"
         for c in contract:
             contract_t = contract_t + "<code>" + c.symbol + "</code>" + "\n"
-        
+
         return telegram.send_Message(
             chat_id,
-            MESSAGES['message_get_voucher_code'].format(balance) + walets + contract_t,
+            MESSAGES['message_get_transaction_code'].format(balance, CHANNEL_HELP) + walets + contract_t,
             reply_markup=back_to_home_button()
-        )        
+        )
 
     if user.step.startswith("Admin_Pannel"):
         management(user_obj, user, telegram, chat_id, text, message_id)
@@ -264,29 +220,29 @@ def callback_query_update(update):
         )
 
     if callback_data == 'my_account_balance':
-        if not user.user_balance.wallat:
-            user_obj.update(step="GET_USER_WALLAT")
+        if not user.user_balance.wallet:
+            user_obj.update(step="GET_USER_wallet")
             return telegram.editMessageText(
                 callback_chat_id,
                 callback_message_id,
-                MESSAGES["message_get_user_wallat"],
+                MESSAGES["message_get_user_wallet"],
                 reply_markup=back_to_home_button()
             )
         
         balance = f"<b>{int(user.user_balance.balance / 10):,}</b>"
-        wallat = Wallat.objects.all()
+        wallet = Wallet.objects.all()
         walets  = ""
-        for w in wallat:
-            walets = walets + "<code>" + w.wallat + "</code>" + "\n"
+        for w in wallet:
+            walets = walets + "<code>" + w.wallet + "</code>" + "\n"
         contract = ContractAddres.objects.all()
-        contract_t  = "\nلیست ارز های پشتیبانی شده در شبکه ترون ⬇️\n"
+        contract_t  = "\nلیست ارز های پشتیبانی شده در شبکه ترون 👇🏻\n"
         for c in contract:
             contract_t = contract_t + "<code>" + c.symbol + "</code>" + "\n"
         
         telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
-            MESSAGES['message_get_voucher_code'].format(balance) + walets + contract_t,
+            MESSAGES['message_get_transaction_code'].format(balance, CHANNEL_HELP) + walets + contract_t,
             reply_markup=back_to_home_button()
         )        
         user_obj.update(step="GET_TRANSACTION_ID")
@@ -299,7 +255,6 @@ def callback_query_update(update):
             MESSAGES["start_message"],
             reply_markup=show_start_home_buttons(callback_chat_id)
         )
-        
 
     elif callback_data == 'support_section':
         telegram.editMessageText(
@@ -574,7 +529,7 @@ def callback_query_update(update):
             telegram, user,
             new_server,
             callback_chat_id, callback_message_id,
-            str(uuid4()), 
+            str(uuid4()),
             config_id,
             callback_id
         ).main()
