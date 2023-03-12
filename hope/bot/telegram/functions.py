@@ -26,7 +26,8 @@ def show_start_home_buttons(user_id=0):
             ],
             [
                 {'text': '📢 کانال راهنما و اطلاع رسانی ',
-                 'url': f'https://t.me/{CHANNEL_HELP}'}
+                 'url': CHANNEL_HELP
+                }
             ],
             [
                 {'text': '📮 ارتباط با پشتیبانی',
@@ -138,25 +139,25 @@ def show_volume_buttons():
 def show_country_buttons(volume: str = 0, section="buy"):
     """Show country buttons to test or buy"""
     countries = Server.objects.filter(down=False)
+    inline = []
     if countries:
-        inline = [
-            [
-                {'text': country.name,
-                 'callback_data': f"{section}_plan_country_{country.domain_country}:{volume}"}
-            ]
-            for country in countries
-        ]
         inline.append(
-            [
-                {'text': '🔙 بازگشت 🔙' if section == "buy" else "🔝 بازگشت به منو", 
-                 'callback_data': 'back_to_choice_volume' if section == "buy" else "back_to_menu"},
-            ]
+            [{
+                'text': country.name,
+                'callback_data': f"{section}_plan_country_{country.domain_country}:{volume}"
+            }]
+            for country in countries
         )
-        markup = {
-            'inline_keyboard': inline
-        }
-
-        return json.dumps(markup)
+    inline.append(
+        [{
+            'text': '🔙 بازگشت 🔙' if section == "buy" else "🔝 بازگشت به منو",
+            'callback_data': 'back_to_choice_volume' if section == "buy" else "back_to_menu"
+        }]
+    )
+    markup = {
+        'inline_keyboard': inline
+    }
+    return json.dumps(markup)
 
 
 def show_services_button(configs: list, user_id: int, start_range, next_range):
@@ -276,23 +277,24 @@ def change_config_location_buttons(id):
 
 def show_change_location_country(id):
     countries = Server.objects.filter(down=False)
+    inline = []
     if countries:
-        inline = [
-            [
-                {'text': country.name,
-                    'callback_data': f"change_location_country_{id}:{country.domain_country}"}
-            ]
+        inline.append(
+            [{
+                'text': country.name,
+                'callback_data': f"change_location_country_{id}:{country.domain_country}"
+            }]
             for country in countries
-        ]
-        inline.append([
-            {'text': '🔝 بازگشت', 'callback_data': 'back_to_choice_service'},
-        ]
         )
-        markup = {
-            'inline_keyboard': inline
-        }
-
-        return json.dumps(markup)
+    inline.append(
+        [{
+            'text': '🔝 بازگشت', 'callback_data': 'back_to_choice_service'
+        }]
+    )
+    markup = {
+        'inline_keyboard': inline
+    }
+    return json.dumps(markup)
 
 
 # Admin Section
