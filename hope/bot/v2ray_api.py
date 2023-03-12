@@ -7,10 +7,11 @@ from hope.bot.telegram.configs import *
 
 
 class XUIAPI:
-    def __init__(self, server, username, password):
+    def __init__(self, server, username, password, user=BOT_USERNAME):
         self.server = server
         self.username = username
         self.password = password
+        self.user = user
         self.login_url = f"http://{server}:{SERVERS_PORT}/uxadm/login"
         self.add_inbounds = f"http://{server}:{SERVERS_PORT}/uxadm/xui/inbound/add"
         self.list_inbounds = f"http://{server}:{SERVERS_PORT}/uxadm/xui/inbound/list"
@@ -88,7 +89,7 @@ class XUIAPI:
         }
         proxy_hash = {
             "v": "2",
-            "ps": BOT_USERNAME,
+            "ps": self.user,
             "add": self.server,
             "port": port,
             "id": uuid_,

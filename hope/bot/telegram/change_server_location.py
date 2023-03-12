@@ -75,6 +75,7 @@ class ChangeLocation:
         try:
             xray.delete_config(self.user_config["id"])
             new_xray = XUIAPI(
+                user=self.user.username,
                 server=self.new_server.ip,
                 username=self.new_server.username,
                 password=self.new_server.password
