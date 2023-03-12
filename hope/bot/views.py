@@ -5,6 +5,7 @@ from .telegram.functions import *
 from .telegram.admin_panel import management
 from .telegram.change_server_location import *
 from .validator.payment_validator import PaymentValidator
+from .validator.server_validator import ServerValidator
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -266,22 +267,26 @@ def callback_query_update(update):
         return telegram.send_AnswerCallbackQuery(callback_id,"✅")
 
     elif callback_data == 'test_config':
-        time_now = datetime.now(tz=pytz.UTC)
-        weektime = time_now + timedelta(7)
+        server_v = ServerValidator(Server, MESSAGES)
+        status, data = server_v.has_server()        
+        if not status:
+            msg = data
+            r_key = back_to_home_button()
+        else:
+            msg = MESSAGES['message_choice_country_test']
+            r_key = show_country_buttons(section="test")
+            time_now = datetime.now(tz=pytz.UTC)
+            weektime = time_now + timedelta(7)
+            if user.user_balance.test_date:
+                if user.user_balance.test_date > time_now:
+                    msg = MESSAGES['message_error_test_config']
+                    r_key = show_start_home_buttons(callback_chat_id)
 
-        if user.user_balance.test_date:
-            if user.user_balance.test_date > time_now:
-                return telegram.editMessageText(
-                    callback_chat_id,
-                    callback_message_id,
-                    MESSAGES['message_error_test_config'],
-                    reply_markup=show_start_home_buttons(callback_chat_id)
-                )
         return telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
-            MESSAGES['message_choice_country_test'],
-            reply_markup=show_country_buttons(section="test")
+            msg,
+            reply_markup=r_key
         )
 
     elif callback_data == "send_to_one_msg":
@@ -301,11 +306,20 @@ def callback_query_update(update):
         )
 
     elif callback_data in ['show_panels', "back_to_choice_volume"]:
-        telegram.editMessageText(
+        server_v = ServerValidator(Server, MESSAGES)
+        status, data = server_v.has_server()
+        if not status:
+            msg = data
+            r_key = back_to_home_button()
+        else:
+            msg = MESSAGES['message_choice_volume']
+            r_key = show_volume_buttons()
+
+        return telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
-            MESSAGES['message_choice_volume'],
-            reply_markup=show_volume_buttons()
+            msg,
+            reply_markup=r_key
         )
 
     elif callback_data in ["my_service", "back_to_choice_service"]:
