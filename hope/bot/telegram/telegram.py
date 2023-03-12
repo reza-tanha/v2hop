@@ -5,10 +5,11 @@ import json
 
 class Telegram:
     def bot(self, telegram_method, data, method='GET', file=None):
-        proxy_s = {
-            "https": PROXY_HTTP,
-            "http": PROXY_HTTP
-        }
+        if PROXY_HTTP:
+            proxy_s = {
+                "https": PROXY_HTTP,
+                "http": PROXY_HTTP
+            }
         if PROXY_SOCKS:
             proxy_s = {
                 "http": f'socks5h://{PROXY_SOCKS}',
