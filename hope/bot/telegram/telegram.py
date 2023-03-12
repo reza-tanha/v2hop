@@ -45,6 +45,7 @@ class Telegram:
             "chat_id": chat_id,
             "text": text,
             "parse_mode": "html",
+            "disable_web_page_preview": "true"
         }
         params.update(**kwargs)
         result = self.bot("sendMessage", params)
@@ -68,6 +69,7 @@ class Telegram:
             "message_id": message_id,
             "text": text,
             "parse_mode": "html",
+            "disable_web_page_preview": "true"
         }
 
         params.update(**kwargs)
