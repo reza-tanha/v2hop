@@ -8,79 +8,82 @@ class SingletonModel(models.Model):
         self.id = 1
         return super().save(*args, **kwargs)
 
-class Wallat(models.Model):
-    
+
+class Wallet(models.Model):
+
     name = models.CharField(
         max_length=20,
         verbose_name="Name : Tron"
     )
-    wallat = models.CharField(
+
+    wallet = models.CharField(
         max_length=90,
         verbose_name="Wallet",
         unique=True
     )
-    
+
     def __str__(self):
-        return f"{self.name} : {self.wallat}"
+        return f"{self.name} : {self.wallet}"
+
 
 class ContractAddres(models.Model):
-    
+
     symbol = models.CharField(
         max_length=15,
         verbose_name="Symbol : USDT, TRX, "
     )
-    
+
     contract_addres = models.CharField(
         max_length=90,
         verbose_name="contract_addres",
         default=None,
-        blank=True ,
+        blank=True,
         null=True
     )
-    
+
     def __str__(self) -> str:
         return f"{self.symbol}"
-    
-    
+
+
 class UserPayments(models.Model):
-    
+
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE, 
+        on_delete=models.CASCADE,
         verbose_name="User",
         related_name="user_userpayment"
     )
-    
+
     transaction_id = models.CharField(
         max_length=64,
         verbose_name="Transaction Id",
         unique=True
     )
-    
+
     date = models.DateTimeField(
         auto_now=True
     )
-    
+
     status = models.BooleanField(
         verbose_name="Status",
         default=False,
         null=True,
         blank=True
     )
-    
-    ownerAddress = models.CharField(
+
+    owner_address = models.CharField(
         max_length=64,
         verbose_name="ownerAddress",
         null=True,
         blank=True
     )
-    
+
     amount = models.FloatField(
         verbose_name="amount",
         default=0,
         blank=True
     )
-    
+
     contract_address = models.CharField(
         max_length=64,
         verbose_name="contract_address",
@@ -88,23 +91,24 @@ class UserPayments(models.Model):
         null=True,
         blank=True
     )
-    
-    contractRet = models.CharField(
+
+    contract_ret = models.CharField(
         max_length=64,
         verbose_name="contractRet",
         default=None,
         null=True,
         blank=True
     )
-    
-    srConfirmList = models.IntegerField(
+
+    sr_confirm_list = models.IntegerField(
         verbose_name="srConfirmList",
         default=0,
         blank=True
     )
-    
+
     def __str__(self) -> str:
         return f"{self.user.first_name} : {self.user.user_id}"
+
 
 class BotUpdateStatus(SingletonModel):
     is_update = models.BooleanField(
