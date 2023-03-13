@@ -154,15 +154,11 @@ def message_update(update):
         walets  = ""
         for w in wallet:
             walets += "<code>" + w.wallet + "</code>" + "\n"
-        contract = ContractAddres.objects.all()
-        contract_t  = "\nلیست ارز های پشتیبانی شده در شبکه ترون 👇🏻\n"
-        for c in contract:
-            contract_t = contract_t + "<code>" + c.symbol + "</code>" + "\n"
 
         return telegram.send_Message(
-            chat_id,
-            MESSAGES['message_get_transaction_code'].format(balance, CHANNEL_HELP) + walets + contract_t,
-            reply_markup=back_to_home_button()
+            chat_id=chat_id,
+            text=MESSAGES['message_get_transaction_code'].format(balance, CHANNEL_HELP) + walets,
+            reply_markup=back_to_home_button(cancel=True)
         )
 
     if user.step.startswith("Admin_Pannel"):
