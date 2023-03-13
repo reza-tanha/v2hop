@@ -39,11 +39,11 @@ def show_start_home_buttons(user_id=0):
     return json.dumps(markup)
 
 
-def back_to_home_button():
+def back_to_home_button(cancel: bool=False):
     markup = {
         'inline_keyboard': [
             [
-                {'text': '🔝 بازگشت به منو', 'callback_data': 'back_to_menu'},
+                {'text': 'لغو تراکنش ❌' if cancel else '🔝 بازگشت به منو', 'callback_data': 'back_to_menu'},
             ]
         ]
     }
