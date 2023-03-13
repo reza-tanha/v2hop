@@ -99,5 +99,5 @@ class PaymentValidator:
         if not status:
             return None, contract
 
-        user_payment = self.update_user_payment(user_payment)
+        self.update_user_payment(user_payment)
         return contract, self.info

@@ -109,25 +109,23 @@ def message_update(update):
                 text=info,
                 reply_markup=back_to_home_button()
             )
-
         contract = contract_obj.first()
         amount = info["amount"]
-        exchange = Exchange()
-        price = exchange.get_symbol_price(contract.symbol)
+        price = Exchange().get_symbol_price(contract.symbol)
         new_balance = (price * 10) * amount
         user.user_balance.balance += new_balance
         user.user_balance.save()
         balance = f"<b>{int(user.user_balance.balance//10):,}</b>"
         logging.addlog("payment.log",f"""
             user id: {user_id},
+            amount: {amount},
             exchange symbol price: {price},
             new balance: {new_balance},
-            amount: {amount},
             ownerAddress: {info['ownerAddress']},
             toAddress: {info['toAddress']}
             srConfirmList: {info['srConfirmList']}
             transactionID: {text}
-            time: {datetime.now()}"""            
+            time: {datetime.now()}"""
         )
         return telegram.send_Message(
             chat_id,
