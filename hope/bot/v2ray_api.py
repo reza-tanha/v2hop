@@ -30,7 +30,7 @@ class XUIAPI:
         data = {
             "up": 0,
             "down": 0,
-            "remark": BOT_USERNAME,
+            "remark": f"{BOT_USERNAME} : {self.user}",
             "enable": True,
             "expiryTime": expire_date,
             "autoreset": False,
