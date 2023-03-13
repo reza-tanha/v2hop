@@ -26,11 +26,14 @@ class XUIAPI:
             expire_date = int(str(time_now+expire_date * 60 * 60)+"000")
 
         port = random.randint(10000, 65000)
+        test = ""
+        if total == 150:
+            test = " : Test"
         total = total * 1024 * 1024
         data = {
             "up": 0,
             "down": 0,
-            "remark": f"{BOT_USERNAME} : {self.user}",
+            "remark": f"{BOT_USERNAME.strip('bot')} : {self.user}{test}",
             "enable": True,
             "expiryTime": expire_date,
             "autoreset": False,
