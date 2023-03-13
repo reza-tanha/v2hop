@@ -389,10 +389,10 @@ def callback_query_update(update):
         selected_country, selected_volume = callback_data.split("_")[-1].split(":")
         server = get_object_or_404(Server, domain_country=selected_country, down=False)
         xray = XUIAPI(
-            use=user.username,
             server=server.ip,
             username=server.username,
-            password=server.password
+            password=server.password,
+            user=user.username,
         )
         all_configs_in_server = xray.get_count_config()
         if len(all_configs_in_server) >= 30:
