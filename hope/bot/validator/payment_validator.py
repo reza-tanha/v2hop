@@ -34,7 +34,7 @@ class PaymentValidator:
         """Check the OwnerAddress of the transaction
            is the same as the user wallet address or not
         """
-        self.info = self.tron_scan.check(transaction_id=self.transactionid)
+        self.info = self.tron_scan().check(transaction_id=self.transactionid)
         if not self.info or self.info['ownerAddress'] != self.user.user_balance.wallet:
             return False, self.MESSAGES["message_user_transaction_not_related_error"]
         return True, None
