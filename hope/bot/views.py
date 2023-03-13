@@ -480,7 +480,7 @@ def callback_query_update(update):
         config = ProxyConfig(
             proxy_hash=select_config[0],
             server=server,
-            volume=selected_volume,
+            volume=150,
             is_use=True,
             expire_date=datetime.now() + timedelta(hours=1),
             user=user,

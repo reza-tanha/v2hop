@@ -191,11 +191,11 @@ def show_config_info(config, location: str, test_section: bool=False, volume: in
     volume = convert_size(volume)
     proxy = config[0]
     text = f"""
-        \n🎗  کانفیگ {'تست' if test_section else ''} شما :\
+        \n🎗 کانفیگ {'تست' if test_section else ''} شما :\
         \n\n<code>{proxy}</code>\
-        \n\n🎗 حجم: {volume}
-        \n\n🌐 لوکیشن:‌ {location}
-        \n\n☘️ برای استفاده از کانفیگ و راهنمایی ها به چنل راهنما مراجعه کنید:‌ @{CHANNEL_HELP.strip("https://t.me/")}
+        \n🎗 حجم: {volume}\
+        \n\n🌐 لوکیشن:‌ {location}\
+        \n\n<a href='{CHANNEL_HELP}'><b>☘️ برای یاد گرفتن نحوه استفاده از کانفیگ و دریافت اطلاعات جدید می توانید به چنل راهنما مراجع کنید.‌</b></a>\
         \n\n🆔 @{BOT_USERNAME}
     """
     return text
