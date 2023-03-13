@@ -101,16 +101,17 @@ def message_update(update):
             reply_markup=show_admin_keyboard())
 
     if user.step == 'GET_TRANSACTION_ID':
-        py_validator = PaymentValidator(user, UserPayments, Wallet, TronScan, text, MESSAGES)
-        status, data = py_validator.main()
-        if not status:
+        py_validator = PaymentValidator(user, ContractAddres, UserPayments, Wallet, TronScan, text, MESSAGES)
+        contract_obj, info = py_validator.main()
+        if not contract_obj:
             return telegram.send_Message(
                 chat_id=chat_id,
-                text=data,
+                text=info,
                 reply_markup=back_to_home_button()
             )
 
-        contract, amount = contract.first()
+        contract = contract_obj.first()
+        amount = info["amount"]
         exchange = Exchange()
         price = exchange.get_symbol_price(contract.symbol)
         new_balance = (price * 10) * amount
@@ -119,15 +120,18 @@ def message_update(update):
         balance = f"<b>{int(user.user_balance.balance//10):,}</b>"
         logging.addlog("payment.log",f"""
             user id: {user_id},
-            "symbol price": {price},
-            "new balance": {new_balance},
-            amount: {UserPayments.amount},
-            ownerAddress: {UserPayments.ownerAddress},
-            transactionID: {text}"""
+            exchange symbol price: {price},
+            new balance: {new_balance},
+            amount: {amount},
+            ownerAddress: {info['ownerAddress']},
+            toAddress: {info['toAddress']}
+            srConfirmList: {info['srConfirmList']}
+            transactionID: {text}
+            time: {datetime.now()}"""            
         )
         return telegram.send_Message(
             chat_id,
-            MESSAGES['message_success_charjid'].format(balance),
+            MESSAGES['message_wallet_success_charjid'].format(balance),
             reply_markup=back_to_home_button()
         )
 

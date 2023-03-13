@@ -4,6 +4,7 @@ from dataclasses import dataclass
 @dataclass
 class PaymentValidator:
     user: object
+    contract: object
     payment: object
     wallet: object
     tron_scan: object
@@ -98,5 +99,5 @@ class PaymentValidator:
         if not status:
             return None, contract
 
-        self.update_user_payment(user_payment)
-        return contract, self.info["amount"]
+        user_payment = self.update_user_payment(user_payment)
+        return contract, self.info
