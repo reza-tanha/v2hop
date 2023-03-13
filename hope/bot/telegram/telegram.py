@@ -5,6 +5,7 @@ import json
 
 class Telegram:
     def bot(self, telegram_method, data, method='GET', file=None):
+        proxy_s = None
         if PROXY_HTTP:
             proxy_s = {
                 "https": PROXY_HTTP,
