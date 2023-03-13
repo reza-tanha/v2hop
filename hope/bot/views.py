@@ -445,7 +445,8 @@ def callback_query_update(update):
         config.save()
         telegram.editMessageText(
             callback_chat_id, callback_message_id,
-            show_config_info(select_config, new_volume=plan.volume*1024*1024),
+            show_config_info(config=select_config,
+                             location=server.name, volume=plan.volume*1024*1024),
             reply_markup=show_start_home_buttons(callback_chat_id)
         )
         telegram.send_Message(
@@ -495,7 +496,8 @@ def callback_query_update(update):
         telegram.editMessageText(
             callback_chat_id,
             callback_message_id,
-            show_config_info(select_config, True)
+            show_config_info(config=select_config, location=server.name,
+                             test_section=True, volume=157286400)
         )
         return telegram.send_Message(
             callback_chat_id,

@@ -187,14 +187,15 @@ def show_services_button(configs: list, user_id: int, start_range, next_range):
     return json.dumps(markup)
 
 
-def show_config_info(config, section: str = 0, new_volume: int =0):
-    volume = convert_size(new_volume)
+def show_config_info(config, location: str, test_section: bool=False, volume: int=0):
+    volume = convert_size(volume)
     proxy = config[0]
     text = f"""
-        \n🎗  کانفیگ {'تست' if section else ''} شما :\
+        \n🎗  کانفیگ {'تست' if test_section else ''} شما :\
         \n\n<code>{proxy}</code>\
-        \n\n🎗حجم : {volume}
-        \n❗️برای دستگاه های ios فقط از برنامه NapsternetV استفاده کنید.\
+        \n\n🎗 حجم: {volume}
+        \n\n🌐 لوکیشن:‌ {location}
+        \n\n☘️ برای استفاده از کانفیگ و راهنمایی ها به چنل راهنما مراجعه کنید:‌ @{CHANNEL_HELP.strip("https://t.me/")}
         \n\n🆔 @{BOT_USERNAME}
     """
     return text
