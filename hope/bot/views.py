@@ -16,7 +16,6 @@ from hope.bot.log_api import BotLoger
 from hope.payment.models import *
 from hope.ray.models import *
 
-from perfectmoney import PerfectMoney
 from datetime import timedelta, datetime
 from uuid import uuid4
 import pytz
