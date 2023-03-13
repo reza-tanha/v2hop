@@ -109,6 +109,7 @@ def message_update(update):
                 text=data,
                 reply_markup=back_to_home_button()
             )
+
         contract, amount = contract.first()
         exchange = Exchange()
         price = exchange.get_symbol_price(contract.symbol)
@@ -116,6 +117,14 @@ def message_update(update):
         user.user_balance.balance += new_balance
         user.user_balance.save()
         balance = f"<b>{int(user.user_balance.balance//10):,}</b>"
+        logging.addlog("payment.log",f"""
+            user id: {user_id},
+            "symbol price": {price},
+            "new balance": {new_balance},
+            amount: {UserPayments.amount},
+            ownerAddress: {UserPayments.ownerAddress},
+            transactionID: {text}"""
+        )
         return telegram.send_Message(
             chat_id,
             MESSAGES['message_success_charjid'].format(balance),
@@ -228,7 +237,7 @@ def callback_query_update(update):
                 MESSAGES["message_get_user_wallet"],
                 reply_markup=back_to_home_button()
             )
-        
+
         balance = f"<b>{int(user.user_balance.balance / 10):,}</b>"
         wallet = Wallet.objects.all()
         walets  = ""
@@ -267,7 +276,7 @@ def callback_query_update(update):
 
     elif callback_data == 'test_config':
         server_v = ServerValidator(Server, MESSAGES)
-        status, data = server_v.has_server()        
+        status, data = server_v.has_server()
         if not status:
             msg = data
             r_key = back_to_home_button()
