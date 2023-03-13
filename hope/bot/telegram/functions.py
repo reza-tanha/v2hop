@@ -363,7 +363,7 @@ def show_admin_del_service_keyboard(data):
         "inline_keyboard": [
             [
                 {"text": "🗑 Delete Service",
-                    "callback_data": f"delete_service_{data}"},
+                    "callback_data": f"del_ser_{data}"},
             ]
         ]
     }

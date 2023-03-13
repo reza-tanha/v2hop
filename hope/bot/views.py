@@ -558,7 +558,7 @@ def callback_query_update(update):
             callback_id
         ).main()
 
-    elif callback_data.startswith("delete_service"):
+    elif callback_data.startswith("del_ser"):
         ip, config_uuid = callback_data.split("_")[-1].split(":")
         service_id = callback_text.split("ID: ")[1].split("\n")[0]
         server = Server.objects.filter(ip=ip).first()
